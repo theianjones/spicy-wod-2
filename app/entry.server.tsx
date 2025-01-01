@@ -9,7 +9,8 @@ import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
 
-const ABORT_DELAY = 5000;
+// Reject/cancel all pending promises after 5 seconds
+export const streamTimeout = 5000;
 
 export default async function handleRequest(
   request: Request,
@@ -22,13 +23,11 @@ export default async function handleRequest(
   loadContext: AppLoadContext
 ) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), ABORT_DELAY);
 
   const body = await renderToReadableStream(
     <RemixServer
       context={remixContext}
       url={request.url}
-      abortDelay={ABORT_DELAY}
     />,
     {
       signal: controller.signal,
@@ -41,8 +40,6 @@ export default async function handleRequest(
       },
     }
   );
-
-  body.allReady.then(() => clearTimeout(timeoutId));
 
   if (isbot(request.headers.get("user-agent") || "")) {
     await body.allReady;
