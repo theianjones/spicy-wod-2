@@ -45,3 +45,12 @@ This template comes with [Tailwind CSS](https://tailwindcss.com/) already config
 ## Project Notes
 
 This project has been upgraded from Remix v2 to React Router v7 following the [official migration guide](https://reactrouter.com/dev/upgrading/remix). Package management is handled using pnpm instead of npm.
+
+## Local Development
+
+Run the following commands to set up the database:
+
+```sh
+pnpm db:migrate
+pnpm db:seed
+```

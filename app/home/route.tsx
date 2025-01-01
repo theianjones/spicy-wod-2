@@ -1,4 +1,6 @@
-import type { MetaFunction } from "react-router";
+import type { MetaFunction, LoaderFunctionArgs } from "react-router";
+import type { Route } from '../+types/root'
+import { useLoaderData } from "react-router";
 
 
 export const meta: MetaFunction = () => {
@@ -8,47 +10,29 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export async function loader({ context }: Route.LoaderArgs) {
+    const db = context.cloudflare.env.DB
+    const result = await db.prepare("SELECT * FROM movements").all()
+    return {
+        movements: result.results
+    }
+}
+
 export default function Index() {
+  const { movements } = useLoaderData<typeof loader>()
   return (
     <div className="flex h-screen items-center justify-center">
-      <div className="flex flex-col items-center gap-16">
+      <div className="flex flex-col items-center gap-16 p-16">
         <header className="flex flex-col items-center gap-9">
           <h1 className="leading text-2xl font-bold text-gray-800 dark:text-gray-100">
-            Welcome to <span className="sr-only">Remix</span>
+            Welcome to SpicyWOD
           </h1>
-          <div className="h-[144px] w-[434px]">
-            <img
-              src="/logo-light.png"
-              alt="Remix"
-              className="block w-full dark:hidden"
-            />
-            <img
-              src="/logo-dark.png"
-              alt="Remix"
-              className="hidden w-full dark:block"
-            />
-          </div>
         </header>
-        <nav className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-gray-200 p-6 dark:border-gray-700">
-          <p className="leading-6 text-gray-700 dark:text-gray-200">
-            What&apos;s next?
-          </p>
-          <ul>
-            {resources.map(({ href, text, icon }) => (
-              <li key={href}>
-                <a
-                  className="group flex items-center gap-3 self-stretch p-3 leading-normal text-blue-700 hover:underline dark:text-blue-500"
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {icon}
-                  {text}
-                </a>
-              </li>
+        <div className="flex gap-4 flex-wrap">
+            {movements.map((movement) => (
+                <div key={movement.id}>{movement.name}</div>
             ))}
-          </ul>
-        </nav>
+        </div>
       </div>
     </div>
   );

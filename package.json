@@ -10,7 +10,9 @@
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "wrangler dev",
     "typecheck": "react-router typegen && tsc",
-    "typegen": "wrangler types"
+    "typegen": "wrangler types",
+    "db:migrate": "wrangler d1 execute dev-spicy-db --local --file ./schema.sql",
+    "db:seed": "wrangler d1 execute dev-spicy-db --local --file ./seed.sql"
   },
   "dependencies": {
     "@react-router/cloudflare": "^7.1.1",

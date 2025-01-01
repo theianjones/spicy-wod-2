@@ -7,7 +7,9 @@ import { getLoadContext } from "./load-context";
 
 export default defineConfig({
   plugins: [
-    cloudflareDevProxy(),
+    cloudflareDevProxy({
+      getLoadContext,
+    }),
     reactRouter(),
     tsconfigPaths(),
   ],

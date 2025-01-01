@@ -9,3 +9,8 @@ assets = { directory = "./build/client" }
 # Configuration: https://developers.cloudflare.com/workers/observability/logs/workers-logs/#enable-workers-logs
 [observability]
 enabled = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "dev-spicy-db"
+database_id = "f866d06d-bc51-47de-ab43-9381a08b5c8a"
