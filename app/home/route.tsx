@@ -30,7 +30,13 @@ export default function Index() {
         </header>
         <div className="flex gap-4 flex-wrap">
             {movements.map((movement) => (
-                <div key={movement.id}>{movement.name}</div>
+                <div key={movement.id} className="flex flex-col gap-2 border border-gray-200 p-4 rounded-md min-w-[200px] min-h-[90px]">
+                  <div className="flex flex-row gap-2 items-center justify-between">
+                  <h2 className="text-lg font-bold text-gray-600 dark:text-gray-200">{movement.name}</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-200">{movement.type}</p>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-200">{movement.variations}</p>
+                </div>
             ))}
         </div>
       </div>

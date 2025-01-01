@@ -22,7 +22,8 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS movements (
     id UUID PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    type VARCHAR(20) CHECK (type IN ('strength', 'gymnastic', 'monostructural'))
+    type VARCHAR(20) CHECK (type IN ('strength', 'gymnastic', 'monostructural')),
+    variations TEXT
 );
 
 -- Workouts table

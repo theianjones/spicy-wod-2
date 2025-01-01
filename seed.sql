@@ -4,27 +4,24 @@ DELETE FROM workouts;
 DELETE FROM movements;
 
 -- Seed movements table - Strength movements
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000001', 'snatch', 'strength');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000002', 'clean', 'strength');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000003', 'jerk', 'strength');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000001', 'snatch', 'strength', '["power", "hang"]');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000002', 'clean', 'strength', '["power", "hang"]');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000003', 'jerk', 'strength', '["split", "push"]');
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000004', 'clean and jerk', 'strength');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000007', 'push press', 'strength');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000008', 'press', 'strength');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000009', 'jerk', 'strength');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000008', 'press', 'strength', '["push", "strict"]');
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000011', 'thruster', 'strength');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000012', 'squat', 'strength');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000012', 'squat', 'strength', '["front", "back", "overhead", "air"]');
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000015', 'deadlift', 'strength');
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000016', 'sumo deadlift high pull', 'strength');
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000017', 'bench press', 'strength');
 
 -- Gymnastic movements
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000018', 'push up', 'gymnastic');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000020', 'handstand push up', 'gymnastic');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000022', 'pull up', 'gymnastic');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000023', 'chest to bar pull up', 'gymnastic');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000024', 'ring row', 'gymnastic');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000025', 'muscle up', 'gymnastic');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000027', 'toes to bar', 'gymnastic');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000018', 'push up', 'gymnastic', '["strict", "kipping", "wall facing"]');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000020', 'handstand push up', 'gymnastic', '["strict", "kipping", "wall facing"]');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000022', 'pull up', 'gymnastic', '["strict", "kipping"]');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000023', 'chest to bar pull up', 'gymnastic', '["strict", "kipping"]');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000025', 'muscle up', 'gymnastic', '["strict", "kipping"]');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000027', 'toes to bar', 'gymnastic', '["strict", "kipping"]');
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000028', 'knees to elbow', 'gymnastic');
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000029', 'ghd sit up', 'gymnastic');
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000030', 'sit up', 'gymnastic');
@@ -34,20 +31,21 @@ INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-00000000
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000034', 'rope climb', 'gymnastic');
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000036', 'burpee', 'gymnastic');
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000037', 'box jump', 'gymnastic');
+INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000035', 'box jump over', 'gymnastic');
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000038', 'pistol', 'gymnastic');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000039', 'lunge', 'gymnastic');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000041', 'air squat', 'gymnastic');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000039', 'lunge', 'gymnastic', '["walking", "reverse", "front rack", "back rack", "overhead"]');
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000042', 'handstand walk', 'gymnastic');
 
 -- Additional strength movements
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000049', 'wall ball', 'strength');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000050', 'dumbbell snatch', 'strength');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000051', 'kettlebell swing', 'strength');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000049', 'wall ball', 'strength', '["hang", "alternating"]');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000050', 'dumbbell snatch', 'strength', '["hang", "alternating"]');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000052', 'dumbbell clean and jerk', 'strength', '["hang", "alternating"]');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000051', 'kettlebell swing', 'strength', '["russian", "american"]');
 
 -- Monostructural movements
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000054', 'run', 'monostructural');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000054', 'run', 'monostructural', '["assault", "outdoor"]');
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000055', 'row', 'monostructural');
-INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000056', 'bike', 'monostructural');
+INSERT INTO movements (id, name, type, variations) VALUES ('00000000-0000-0000-0000-000000000056', 'bike', 'monostructural', '["erg", "assault", "outdoor", "echo"]');
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000057', 'jump rope', 'monostructural');
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000058', 'double under', 'monostructural');
 INSERT INTO movements (id, name, type) VALUES ('00000000-0000-0000-0000-000000000059', 'ski erg', 'monostructural');
