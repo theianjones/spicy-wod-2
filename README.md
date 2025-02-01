@@ -48,9 +48,63 @@ This project has been upgraded from Remix v2 to React Router v7 following the [o
 
 ## Local Development
 
-Run the following commands to set up the database:
+Before starting local development, make sure you have the following prerequisites:
+- Node.js installed
+- pnpm installed (`npm install -g pnpm`)
+- Wrangler CLI installed (`pnpm install -g wrangler`)
 
+1. Install dependencies:
 ```sh
+pnpm install
+```
+
+2. Set up your local database:
+```sh
+# Create a local D1 database
+wrangler d1 create dev-spicy-wod
+
+# Apply database migrations
 pnpm db:migrate
+
+# Seed the database with initial data
 pnpm db:seed
 ```
+
+For a complete reference of all available D1 database commands, see the [Cloudflare D1 Wrangler Commands documentation](https://developers.cloudflare.com/d1/wrangler-commands/).
+
+3. Create a `.env` file in the root directory with the following variables (replace values with your own):
+```sh
+CLOUDFLARE_ACCOUNT_ID=your_account_id
+CLOUDFLARE_DATABASE_ID=your_database_id
+CLOUDFLARE_D1_TOKEN=your_d1_token
+```
+
+4. Start the development server:
+```sh
+pnpm dev
+```
+
+The application should now be running at `http://localhost:5173`
+
+To run with Wrangler (simulating production environment):
+```sh
+pnpm build
+pnpm start
+```
+
+## Database Management with Drizzle Studio
+
+You can use Drizzle Studio to view and manage your database with a visual interface. To start Drizzle Studio:
+
+```sh
+# Start Drizzle Studio
+pnpm db:studio
+
+# By default, it will be available at https://local.drizzle.studio/
+```
+
+This will open a web interface where you can:
+- Browse your database tables
+- View and edit records
+- Run SQL queries
+- Monitor database schema
