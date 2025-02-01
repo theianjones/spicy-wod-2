@@ -1,0 +1,39 @@
+Use pnpm for package management. when running shadcn commands, use "shadcn", the db can be accessed context.cloudflare.env.DB, the db is SQLite and using Cloudflare R2, Use the drizzle orm to write queries.
+
+<AllowedPackages>
+  # Main Dependencies
+  "@react-router/cloudflare" # React Router integration for Cloudflare Workers, enabling server-side rendering and routing
+  "drizzle-orm" # Modern TypeScript ORM for SQL databases with type safety and minimal boilerplate
+  "isbot" # Utility to detect if a request is from a bot/crawler
+  "react" # Core React library for building user interfaces
+  "react-dom" # React package for DOM-specific methods and rendering
+  "react-router" # Declarative routing library for React applications
+  "@radix-ui/react-icons" # Beautiful hand-crafted icons from Radix UI
+  "class-variance-authority" # Create style variants with tailwind classes
+  "clsx" # Utility for constructing className strings
+  "tailwind-merge" # Merge tailwind classes without conflicts
+  "lucide-react" # Beautiful and consistent icon set
+
+  # Dev Dependencies
+  "@cloudflare/workers-types" # TypeScript types for Cloudflare Workers
+  "@react-router/dev" # Development tools for React Router
+  "@types/react" # TypeScript type definitions for React
+  "@types/react-dom" # TypeScript type definitions for React DOM
+  "@typescript-eslint/eslint-plugin" # ESLint plugin for TypeScript-specific linting rules
+  "@typescript-eslint/parser" # Allows ESLint to parse TypeScript code
+  "autoprefixer" # PostCSS plugin to parse CSS and add vendor prefixes automatically
+  "drizzle-kit" # CLI and development tools for Drizzle ORM
+  "eslint" # Static code analysis tool for identifying problematic patterns
+  "eslint-import-resolver-typescript" # ESLint plugin for resolving TypeScript imports
+  "eslint-plugin-import" # ESLint plugin for linting import/export syntax
+  "eslint-plugin-jsx-a11y" # ESLint plugin for accessibility rules on JSX elements
+  "eslint-plugin-react" # React specific linting rules for ESLint
+  "eslint-plugin-react-hooks" # ESLint rules for React Hooks
+  "postcss" # Tool for transforming CSS with JavaScript plugins
+  "tailwindcss" # Utility-first CSS framework for rapid UI development
+  "typescript" # Typed superset of JavaScript that compiles to plain JavaScript
+  "vite" # Modern frontend build tool and development server
+  "vite-tsconfig-paths" # Vite plugin for TypeScript path mapping support
+  "wrangler" # Cloudflare Workers CLI tool for development and deployment
+  "shadcn-ui" # CLI tool for adding shadcn/ui components
+</AllowedPackages>
