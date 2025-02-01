@@ -64,7 +64,7 @@ pnpm install
 wrangler d1 create dev-spicy-wod
 
 # Apply database migrations
-pnpm db:migrate
+pnpm db:apply
 
 # Seed the database with initial data
 pnpm db:seed
@@ -73,6 +73,7 @@ pnpm db:seed
 For a complete reference of all available D1 database commands, see the [Cloudflare D1 Wrangler Commands documentation](https://developers.cloudflare.com/d1/wrangler-commands/).
 
 3. Create a `.env` file in the root directory with the following variables (replace values with your own):
+
 ```sh
 CLOUDFLARE_ACCOUNT_ID=your_account_id
 CLOUDFLARE_DATABASE_ID=your_database_id
