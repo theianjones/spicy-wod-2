@@ -1,4 +1,9 @@
-Use pnpm for package management. when running shadcn commands, use "shadcn", the db can be accessed context.cloudflare.env.DB, the db is SQLite and using Cloudflare R2, Use the drizzle orm to write queries.
+<ProjectRules>
+- Use pnpm for package management
+- when running shadcn commands, use "shadcn"
+- the db can be accessed context.cloudflare.env.DB, the db is SQLite and using Cloudflare R2, Use the drizzle orm to write queries.
+- check ~/schemas/models.ts for the zod schemas and types to use before creating new ones
+</ProjectRules>
 
 <AllowedPackages>
   # Main Dependencies
@@ -13,27 +18,129 @@ Use pnpm for package management. when running shadcn commands, use "shadcn", the
   "clsx" # Utility for constructing className strings
   "tailwind-merge" # Merge tailwind classes without conflicts
   "lucide-react" # Beautiful and consistent icon set
+  "@hookform/resolvers" # Form validation resolvers
+  "react-hook-form" # Form state management
+  "zod" # Schema validation
 
-  # Dev Dependencies
-  "@cloudflare/workers-types" # TypeScript types for Cloudflare Workers
-  "@react-router/dev" # Development tools for React Router
-  "@types/react" # TypeScript type definitions for React
-  "@types/react-dom" # TypeScript type definitions for React DOM
-  "@typescript-eslint/eslint-plugin" # ESLint plugin for TypeScript-specific linting rules
-  "@typescript-eslint/parser" # Allows ESLint to parse TypeScript code
-  "autoprefixer" # PostCSS plugin to parse CSS and add vendor prefixes automatically
-  "drizzle-kit" # CLI and development tools for Drizzle ORM
-  "eslint" # Static code analysis tool for identifying problematic patterns
-  "eslint-import-resolver-typescript" # ESLint plugin for resolving TypeScript imports
-  "eslint-plugin-import" # ESLint plugin for linting import/export syntax
-  "eslint-plugin-jsx-a11y" # ESLint plugin for accessibility rules on JSX elements
-  "eslint-plugin-react" # React specific linting rules for ESLint
-  "eslint-plugin-react-hooks" # ESLint rules for React Hooks
-  "postcss" # Tool for transforming CSS with JavaScript plugins
-  "tailwindcss" # Utility-first CSS framework for rapid UI development
-  "typescript" # Typed superset of JavaScript that compiles to plain JavaScript
-  "vite" # Modern frontend build tool and development server
-  "vite-tsconfig-paths" # Vite plugin for TypeScript path mapping support
-  "wrangler" # Cloudflare Workers CLI tool for development and deployment
-  "shadcn-ui" # CLI tool for adding shadcn/ui components
+# Dev Dependencies
+
+"@cloudflare/workers-types" # TypeScript types for Cloudflare Workers
+"@react-router/dev" # Development tools for React Router
+"@types/react" # TypeScript type definitions for React
+"@types/react-dom" # TypeScript type definitions for React DOM
+"@typescript-eslint/eslint-plugin" # ESLint plugin for TypeScript-specific linting rules
+"@typescript-eslint/parser" # Allows ESLint to parse TypeScript code
+"autoprefixer" # PostCSS plugin to parse CSS and add vendor prefixes automatically
+"drizzle-kit" # CLI and development tools for Drizzle ORM
+"eslint" # Static code analysis tool for identifying problematic patterns
+"eslint-import-resolver-typescript" # ESLint plugin for resolving TypeScript imports
+"eslint-plugin-import" # ESLint plugin for linting import/export syntax
+"eslint-plugin-jsx-a11y" # ESLint plugin for accessibility rules on JSX elements
+"eslint-plugin-react" # React specific linting rules for ESLint
+"eslint-plugin-react-hooks" # ESLint rules for React Hooks
+"postcss" # Tool for transforming CSS with JavaScript plugins
+"tailwindcss" # Utility-first CSS framework for rapid UI development
+"typescript" # Typed superset of JavaScript that compiles to plain JavaScript
+"vite" # Modern frontend build tool and development server
+"vite-tsconfig-paths" # Vite plugin for TypeScript path mapping support
+"wrangler" # Cloudflare Workers CLI tool for development and deployment
+"shadcn-ui" # CLI tool for adding shadcn/ui components
 </AllowedPackages>
+
+<Database>
+# Database Schema Relations
+
+tables:
+users:
+primary: id (text)
+unique: email
+auth_fields: - hashedPassword - passwordSalt - passwordResetToken - passwordResetExpires
+relations: - workouts (one-to-many) - results (one-to-many)
+
+movements:
+primary: id (text)
+key_fields: - name - type: ["strength", "gymnastic", "monostructural"]
+relations: - workouts (many-to-many via workout_movements) - strengthResults (one-to-many) - monostructuralResults (one-to-many)
+
+workouts:
+primary: id (text)
+key_fields: - name - description - scheme: [
+"time",
+"time-with-cap",
+"pass-fail",
+"rounds-reps",
+"reps",
+"emom",
+"load",
+"calories",
+"meters",
+"feet",
+"points"
+]
+optional_fields: - repsPerRound - roundsToScore - tiebreakScheme: ["time", "reps"] - secondaryScheme
+relations: - users (many-to-one) - movements (many-to-many via workout_movements) - wodResults (one-to-many)
+
+results:
+type: base table
+primary: id (text)
+required_fields: - userId - date - type - notes (optional)
+subtypes:
+wodResults:
+additional_fields: - workoutId - scale: ["rx", "scaled", "rx+"]
+relations: - wodSets (one-to-many)
+
+      strengthResults:
+        additional_fields:
+          - movementId
+          - setCount
+        relations:
+          - strengthSets (one-to-many)
+
+      monostructuralResults:
+        additional_fields:
+          - movementId
+          - distance
+          - time
+        relations:
+          - monostructuralSets (one-to-many)
+
+sets:
+wodSets:
+primary: id (text)
+fields: - resultId - score - setNumber
+
+    strengthSets:
+      primary: id (text)
+      fields:
+        - resultId
+        - setNumber
+        - reps
+        - status: ["pass", "fail"]
+        - weight
+
+    monostructuralSets:
+      primary: id (text)
+      fields:
+        - resultId
+        - setNumber
+        - distance
+        - time
+
+common_queries:
+user_workouts:
+tables: [users, workouts]
+join: users.id = workouts.userId
+
+workout_movements:
+tables: [workouts, workout_movements, movements]
+joins: - workouts.id = workout_movements.workoutId - movements.id = workout_movements.movementId
+
+user_results:
+tables: [users, results]
+join: users.id = results.userId
+subtables: - wodResults - strengthResults - monostructuralResults
+
+result_sets:
+pattern: "{result_type}Results JOIN {result_type}Sets"
+examples: - wodResults JOIN wodSets - strengthResults JOIN strengthSets - monostructuralResults JOIN monostructuralSets
+</Database>
