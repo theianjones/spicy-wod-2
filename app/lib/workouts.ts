@@ -18,14 +18,12 @@ export async function getAllWorkoutsWithMovements({ context }: { context: Route.
 
 
   const workouts = result.results.map((workout) => {
-    console.log("workout in getAllWorkouts map", workout)
     const movementNames = workout.movement_names as string
     const movements = movementNames.split(",").map((movement: string) => movement.trim())
     const parsedWorkout = workoutSchema.parse({...workout, movements})
     return parsedWorkout
   })
 
-  console.log("workouts in getAllWorkouts", workouts)
 
   return {
     workouts
