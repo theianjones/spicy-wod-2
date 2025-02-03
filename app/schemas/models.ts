@@ -39,11 +39,11 @@ export const workoutSchema = baseIdSchema.extend({
     "points",
   ]),
   createdAt: z.number().int().optional(),
-  repsPerRound: z.number().int().optional(),
-  roundsToScore: z.number().int().optional(),
+  repsPerRound: z.coerce.number().int().optional(),
+  roundsToScore: z.coerce.number().int().optional(),
   userId: z.string().uuid().optional(),
   sugarId: z.string().optional(),
-  tiebreakScheme: z.enum(["time", "reps"]).optional(),
+  tiebreakScheme: z.enum(["time", "reps"]).nullish(),
   secondaryScheme: z.enum([
     "time",
     "pass-fail",
@@ -55,7 +55,8 @@ export const workoutSchema = baseIdSchema.extend({
     "meters",
     "feet",
     "points",
-  ]).optional(),
+  ]).nullish(),
+  movements: z.array(z.string()).optional(),
 });
 
 // Workout Movements junction schema
