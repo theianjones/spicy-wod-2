@@ -56,7 +56,7 @@ export const workoutSchema = baseIdSchema.extend({
     "feet",
     "points",
   ]).nullish(),
-  movements: z.array(z.string()).min(1, "At least one movement is required"),
+  movements: z.array(z.string()).optional(),
 });
 
 // Workout Movements junction schema

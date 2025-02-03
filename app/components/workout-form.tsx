@@ -225,8 +225,8 @@ export function WorkoutForm() {
 												) : (
 													[...filteredMovements]
 														.sort((a, b) => {
-															const aSelected = field.value.includes(a.id);
-															const bSelected = field.value.includes(b.id);
+															const aSelected = field.value?.includes(a.id);
+															const bSelected = field.value?.includes(b.id);
 															if (aSelected === bSelected) {
 																// If both selected or both unselected, maintain alphabetical order
 																return a.name.localeCompare(b.name);
@@ -238,19 +238,19 @@ export function WorkoutForm() {
 															<div
 																key={movement.id}
 																className={`flex items-center gap-2 p-2 hover:bg-gray-100 cursor-pointer ${
-																	field.value.includes(movement.id)
+																	field.value?.includes(movement.id)
 																		? "bg-gray-50"
 																		: ""
 																}`}
 																onClick={() => {
-																	const isSelected = field.value.includes(
+																	const isSelected = field.value?.includes(
 																		movement.id
 																	);
 																	const newValue = isSelected
-																		? field.value.filter(
+																		? field.value?.filter(
 																				(id) => id !== movement.id
 																		  )
-																		: [...field.value, movement.id];
+																		: [...(field.value || []), movement.id];
 																	field.onChange(newValue);
 																	setSearchQuery("");
 																	form.setFocus("movements")
@@ -258,7 +258,7 @@ export function WorkoutForm() {
 															>
 																<input
 																	type="checkbox"
-																	checked={field.value.includes(movement.id)}
+																	checked={field.value?.includes(movement.id)}
 																	className="form-checkbox h-4 w-4 text-black border-black focus:ring-black"
 																	readOnly
 																/>
@@ -281,7 +281,7 @@ export function WorkoutForm() {
 					/>
 
 					{/* Add hidden inputs for the movements array */}
-					{form.watch("movements").map((movementId) => (
+					{form.watch("movements")?.map((movementId) => (
 						<input
 							key={movementId}
 							type="hidden"

@@ -35,23 +35,26 @@ export async function action({ request, context }: Route.ActionArgs) {
 	try {
 		const data = workoutSchema.parse(rawData);
 
+    if (data.movements) {
+      		// verify all movements exist and get their IDs
+      const movementQuery = `SELECT id FROM movements WHERE id IN (${data.movements
+        .map(() => "?")
+        .join(",")})`;
 
-		// verify all movements exist and get their IDs
-		const movementQuery = `SELECT id FROM movements WHERE id IN (${data.movements
-			.map(() => "?")
-			.join(",")})`;
+
+      const { results: existingMovements } = await db
+        .prepare(movementQuery)
+        .bind(...data.movements)
+        .all();
+
+      if (existingMovements.length !== data.movements.length) {
+        const foundIds = existingMovements.map((m) => m.id);
+        const missingIds = data.movements.filter((id) => !foundIds.includes(id));
+        throw new Error(`Movements not found: ${missingIds.join(", ")}`);
+      }
+    }
 
 
-		const { results: existingMovements } = await db
-			.prepare(movementQuery)
-			.bind(...data.movements)
-			.all();
-
-		if (existingMovements.length !== data.movements.length) {
-			const foundIds = existingMovements.map((m) => m.id);
-			const missingIds = data.movements.filter((id) => !foundIds.includes(id));
-			throw new Error(`Movements not found: ${missingIds.join(", ")}`);
-		}
 
 		// Create workout first
 		const workoutQuery = `
@@ -79,20 +82,22 @@ export async function action({ request, context }: Route.ActionArgs) {
 			)
 			.run();
 
-		// Then create workout movements one by one
-		for (const movementId of data.movements) {
-			const movementLinkQuery = `
-				INSERT INTO workout_movements (id, workout_id, movement_id)
-				VALUES (?, ?, ?)
-			`;
+    if (data.movements) {
+      // Then create workout movements one by one
+      for (const movementId of data.movements) {
+        const movementLinkQuery = `
+          INSERT INTO workout_movements (id, workout_id, movement_id)
+          VALUES (?, ?, ?)
+        `;
 
-			const linkValues = [uuidv4(), workoutId, movementId];
+        const linkValues = [uuidv4(), workoutId, movementId];
 
-			await db
-				.prepare(movementLinkQuery)
-				.bind(...linkValues)
-				.run();
-		}
+        await db
+          .prepare(movementLinkQuery)
+          .bind(...linkValues)
+          .run();
+      }
+    }
 
 		return redirect("/workouts");
 	} catch (error) {
