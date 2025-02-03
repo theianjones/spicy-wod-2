@@ -15,15 +15,14 @@ export async function getAllWorkoutsWithMovements({ context }: { context: Route.
     GROUP BY w.id
   `).all()
 
-
-
   const workouts = result.results.map((workout) => {
-    const movementNames = workout.movement_names as string
-    const movements = movementNames.split(",").map((movement: string) => movement.trim())
-    const parsedWorkout = workoutSchema.parse({...workout, movements})
-    return parsedWorkout
+    return workoutSchema.transform((data) => ({
+      ...data,
+      movements: workout.movement_names ?
+        (workout.movement_names as string).split(',').map(movement => movement.trim())
+        : []
+    })).parse(workout)
   })
-
 
   return {
     workouts
