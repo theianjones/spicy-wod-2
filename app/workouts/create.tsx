@@ -2,8 +2,9 @@ import { redirect } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import type { Route } from "../+types/root";
 import { WorkoutForm } from "~/components/workout-form";
-import { workoutSchema } from "~/schemas/models";
+import { Workout, workoutSchema } from "~/schemas/models";
 import { getAllMovements } from "~/lib/movements";
+import { extractFormData } from "~/utils/extract-form-data";
 
 export async function loader({ context }: Route.LoaderArgs) {
 	return getAllMovements({ context });
@@ -14,26 +15,11 @@ export async function action({ request, context }: Route.ActionArgs) {
 	const formData = await request.formData();
 	const workoutId = uuidv4();
 
-	const rawData = {
-		id: workoutId,
-		name: formData.get("name"),
-		description: formData.get("description"),
-		scheme: formData.get("scheme"),
-		repsPerRound: formData.get("repsPerRound")
-			? Number(formData.get("repsPerRound"))
-			: undefined,
-		roundsToScore: formData.get("roundsToScore")
-			? Number(formData.get("roundsToScore"))
-			: undefined,
-		tiebreakScheme: formData.get("tiebreakScheme"),
-		secondaryScheme: formData.get("secondaryScheme"),
-		movements: formData.getAll("movements").map((m) => String(m)),
-	};
+  const data = extractFormData(workoutSchema.omit({ id: true }), formData)
 
-	console.log("Raw form data:", rawData);
+
 
 	try {
-		const data = workoutSchema.parse(rawData);
 
     if (data.movements) {
       		// verify all movements exist and get their IDs
@@ -49,7 +35,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 
       if (existingMovements.length !== data.movements.length) {
         const foundIds = existingMovements.map((m) => m.id);
-        const missingIds = data.movements.filter((id) => !foundIds.includes(id));
+        const missingIds = data.movements.filter((id: string) => !foundIds.includes(id));
         throw new Error(`Movements not found: ${missingIds.join(", ")}`);
       }
     }
@@ -69,7 +55,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 		await db
 			.prepare(workoutQuery)
 			.bind(
-				data.id,
+				workoutId,
 				data.name,
 				data.description,
 				data.scheme,
