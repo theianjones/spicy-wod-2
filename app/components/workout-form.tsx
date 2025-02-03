@@ -157,13 +157,16 @@ export function WorkoutForm() {
 									<FormControl>
 										<Input
 											type="number"
+											min="0"
 											className="mt-1 block w-full px-3 py-2 bg-gray-100 border-2 border-black text-black placeholder:text-gray-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-black"
 											{...field}
-											onChange={(e) =>
-												field.onChange(
-													e.target.value ? Number(e.target.value) : undefined
-												)
-											}
+											value={field.value ?? ""}
+											onChange={(e) => {
+												const value = e.target.value
+													? parseInt(e.target.value, 10)
+													: undefined;
+												field.onChange(value);
+											}}
 										/>
 									</FormControl>
 									<FormMessage className="text-red-600" />
@@ -180,15 +183,18 @@ export function WorkoutForm() {
 										Rounds to Score
 									</FormLabel>
 									<FormControl>
-										<Input
+                    <Input
 											type="number"
+											min="0"
 											className="mt-1 block w-full px-3 py-2 bg-gray-100 border-2 border-black text-black placeholder:text-gray-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-black"
 											{...field}
-											onChange={(e) =>
-												field.onChange(
-													e.target.value ? Number(e.target.value) : undefined
-												)
-											}
+											value={field.value ?? ""}
+											onChange={(e) => {
+												const value = e.target.value
+													? parseInt(e.target.value, 10)
+													: undefined;
+												field.onChange(value);
+											}}
 										/>
 									</FormControl>
 									<FormMessage className="text-red-600" />
@@ -253,7 +259,7 @@ export function WorkoutForm() {
 																		: [...(field.value || []), movement.id];
 																	field.onChange(newValue);
 																	setSearchQuery("");
-																	form.setFocus("movements")
+																	form.setFocus("movements");
 																}}
 															>
 																<input
