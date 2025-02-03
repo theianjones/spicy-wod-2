@@ -43,7 +43,7 @@ export const workoutSchema = baseIdSchema.extend({
   roundsToScore: z.number().int().optional(),
   userId: z.string().uuid().optional(),
   sugarId: z.string().optional(),
-  tiebreakScheme: z.enum(["time", "reps"]).optional(),
+  tiebreakScheme: z.enum(["time", "reps"]).nullish(),
   secondaryScheme: z.enum([
     "time",
     "pass-fail",
@@ -55,7 +55,8 @@ export const workoutSchema = baseIdSchema.extend({
     "meters",
     "feet",
     "points",
-  ]).optional(),
+  ]).nullish(),
+  movements: z.array(z.string()).min(1, "At least one movement is required"),
 });
 
 // Workout Movements junction schema
