@@ -26,7 +26,7 @@ export function WorkoutCard({ workout }: WorkoutCardProps) {
       <div className="absolute inset-0 bg-black translate-x-2 translate-y-2" />
 
       {/* Card */}
-      <Card className="relative bg-white text-black border border-black h-full flex flex-col justify-between">
+      <Card className="relative bg-white text-black border border-black h-full flex flex-col justify-between rounded-none">
         <CardHeader className="space-y-4 p-6">
           <div className="space-y-1">
             <div className="uppercase text-xs font-bold tracking-wide">WORKOUT NAME</div>
@@ -40,7 +40,7 @@ export function WorkoutCard({ workout }: WorkoutCardProps) {
 
           <div className="space-y-1">
             <div className="uppercase text-xs font-bold tracking-wide">SCORING SCHEME</div>
-            <Badge variant="outline" className="rounded-sm bg-white text-black border-black">
+            <Badge variant="outline" className="bg-white text-black border-black">
               {getSchemeIcon(workout.scheme)}
               <span className="ml-1 uppercase text-xs">{workout.scheme}</span>
             </Badge>
@@ -73,7 +73,7 @@ export function WorkoutCard({ workout }: WorkoutCardProps) {
                   <Badge
                     key={movement}
                     variant="secondary"
-                    className="rounded-sm bg-gray-100 text-black border-none text-xs"
+                    className="bg-gray-100 text-black border-none text-xs"
                   >
                     {movement}
                   </Badge>
