@@ -25,7 +25,6 @@ export async function getAllWorkoutsWithMovements({ context }: { context: Route.
     return parsedWorkout
   })
 
-  console.log("workouts in getAllWorkouts", workouts)
 
   return {
     workouts
