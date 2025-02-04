@@ -3,6 +3,13 @@ import type { Route } from "../authentication/+types/login";
 import { AuthForm } from "~/components/auth-form";
 import { verifyPassword } from "~/utils/auth";
 import { userSchema } from "~/schemas/models";
+import { createSession, createSessionCookie } from "~/utils/session";
+import { redirectIfAuthenticated } from "~/middleware/auth";
+
+export async function loader({ request, context }: Route.LoaderArgs) {
+  await redirectIfAuthenticated(request, context);
+  return null;
+}
 
 export async function action({ request, context }: Route.ActionArgs) {
   const db = context.cloudflare.env.DB;
@@ -11,31 +18,33 @@ export async function action({ request, context }: Route.ActionArgs) {
   const password = formData.get("password") as string;
 
   // Find user
-
   const user = await db.prepare("SELECT * FROM users WHERE email = ?").bind(email).first();
+  const userValidation = userSchema.safeParse(user);
 
-  const userValidation = userSchema.safeParse(user)
-
-  console.log(user)
-  console.log(userValidation.error?.toString())
   if (!userValidation.success) {
     throw new Response("Invalid email or password", { status: 401 });
   }
 
-
-
   // Verify password
-
   const isValid = verifyPassword(password, userValidation.data.password_salt, userValidation.data.hashed_password);
 
   if (!isValid) {
     throw new Response("Invalid email or password", { status: 401 });
   }
 
-  // // Create session
-  // // TODO: Implement session handling
+  // Create session
+  const { sessionId } = await createSession(context, userValidation.data.id, email);
+  
+  // Create response with session cookie
+  const response = new Response(null, {
+    status: 302,
+    headers: {
+      Location: "/",
+      "Set-Cookie": createSessionCookie(sessionId),
+    },
+  });
 
-  return redirect("/");
+  return response;
 }
 
 export default function LoginPage() {

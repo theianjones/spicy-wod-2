@@ -26,14 +26,6 @@ export function AuthForm({ mode }: AuthFormProps) {
     },
   });
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    form.handleSubmit((data) => {
-      // If validation passes, submit the form programmatically
-      const formData = new FormData(e.currentTarget);
-      e.currentTarget.submit();
-    })(e);
-  };
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -43,7 +35,6 @@ export function AuthForm({ mode }: AuthFormProps) {
         style={{
           boxShadow: '8px 8px 0px 0px rgba(0,0,0,1)'
         }}
-        onSubmit={onSubmit}
       >
         <h2 className="text-3xl font-bold tracking-tight text-black uppercase">
           {mode === "signup" ? "Sign Up" : "Log In"}

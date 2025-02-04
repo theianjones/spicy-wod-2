@@ -3,6 +3,13 @@ import type { Route } from "../+types/root";
 import { AuthForm } from "~/components/auth-form";
 import { generateSalt, hashPassword, validatePassword } from "~/utils/auth";
 import { v4 as uuidv4 } from "uuid";
+import { createSession, createSessionCookie } from "~/utils/session";
+import { redirectIfAuthenticated } from "~/middleware/auth";
+
+export async function loader({ request, context }: Route.LoaderArgs) {
+  await redirectIfAuthenticated(request, context);
+  return null;
+}
 
 export async function action({ request, context }: Route.ActionArgs) {
   const db = context.cloudflare.env.DB;
@@ -23,25 +30,35 @@ export async function action({ request, context }: Route.ActionArgs) {
   }
 
   // Create new user
+  const userId = uuidv4();
   const salt = generateSalt();
   const hash = hashPassword(password, salt);
 
-  console.log(email, hash, salt);
   await db.prepare(`
     INSERT INTO users (id, email, hashed_password, password_salt, joined_at) 
     VALUES (?, ?, ?, ?, ?)
   `).bind(
-    uuidv4(),
+    userId,
     email,
     hash,
     salt,
     new Date().toISOString()
   ).run();
 
-  return redirect("/login");
+  // Create session
+  const { sessionId } = await createSession(context, userId, email);
+  
+  // Create response with session cookie
+  const response = new Response(null, {
+    status: 302,
+    headers: {
+      Location: "/",
+      "Set-Cookie": createSessionCookie(sessionId),
+    },
+  });
+
+  return response;
 }
-
-
 
 export default function SignupPage() {
   return (
