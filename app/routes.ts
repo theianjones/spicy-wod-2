@@ -6,4 +6,5 @@ export default [
 	route("/signup", "authentication/signup.tsx"),
 	route("/workouts", "workouts/index.tsx"),
 	route("/workouts/create", "workouts/create.tsx"),
+	route("/workouts/:name", "workouts/[name].tsx")
 ] satisfies RouteConfig;

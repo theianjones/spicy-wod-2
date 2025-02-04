@@ -67,7 +67,7 @@ export const workoutMovementSchema = baseIdSchema.extend({
 
 // Base Result schema
 export const baseResultSchema = baseIdSchema.extend({
-  userId: z.string().uuid(),
+  userId: z.string(), // TODO: change to uuid, I'm spoofing id to 1 for now
   date: z.number().int(),
   type: z.string(),
   notes: z.string().optional(),
@@ -85,6 +85,8 @@ export const wodSetSchema = baseIdSchema.extend({
   score: z.number().int().optional(),
   setNumber: z.number().int(),
 });
+
+export const allWodResultSchema = baseResultSchema.merge(wodResultSchema).merge(wodSetSchema.omit({resultId: true}));
 
 // Strength Results schema
 export const strengthResultSchema = baseIdSchema.extend({
@@ -124,6 +126,7 @@ export type WorkoutMovement = z.infer<typeof workoutMovementSchema>;
 export type BaseResult = z.infer<typeof baseResultSchema>;
 export type WodResult = z.infer<typeof wodResultSchema>;
 export type WodSet = z.infer<typeof wodSetSchema>;
+export type AllWodResult = z.infer<typeof allWodResultSchema>;
 export type StrengthResult = z.infer<typeof strengthResultSchema>;
 export type StrengthSet = z.infer<typeof strengthSetSchema>;
 export type MonostructuralResult = z.infer<typeof monostructuralResultSchema>;
