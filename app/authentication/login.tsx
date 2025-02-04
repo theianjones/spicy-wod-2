@@ -35,27 +35,16 @@ export async function action({ request, context }: Route.ActionArgs) {
   // Create session
   const { sessionId } = await createSession(context, userValidation.data.id, email);
   
-  // Create response with session cookie
-  const response = new Response(null, {
-    status: 302,
+  return redirect("/", {
     headers: {
-      Location: "/",
       "Set-Cookie": createSessionCookie(sessionId),
     },
   });
-
-  return response;
 }
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h1 className="text-center text-4xl font-black uppercase mb-8">
-          Spicy WOD
-        </h1>
-      </div>
-
+    <div className="min-h-screen bg-gray-50 flex flex-col py-12 sm:px-6 lg:px-8">
       <AuthForm mode="login" />
     </div>
   );

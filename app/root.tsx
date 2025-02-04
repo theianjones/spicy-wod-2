@@ -26,8 +26,9 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useLoaderData<typeof loader>();
-  
+  const data = useLoaderData<typeof loader>();
+  const isAuthenticated = data?.isAuthenticated ?? false
+
   return (
     <html lang="en">
       <head>
