@@ -7,6 +7,7 @@ import { getWorkoutWithMovementsByIdOrName } from "~/lib/workouts";
 import { formatTime } from "~/utils/format-time";
 import { WorkoutSchemeIcon } from "~/components/workouts/workout-scheme-icon";
 import { AllWodResult } from "~/schemas/models";
+import { requireAuth } from "~/middleware/auth";
 
 interface WorkoutPageProps {
 	params: {
@@ -14,7 +15,9 @@ interface WorkoutPageProps {
 	};
 }
 
-export async function loader({ context, params }: Route.LoaderArgs) {
+export async function loader({ request, context, params }: Route.LoaderArgs) {
+	const session = await requireAuth(request, context);
+
 	if (!params.name) {
 		throw new Response("Not Found", { status: 404 });
 	}
@@ -25,7 +28,7 @@ export async function loader({ context, params }: Route.LoaderArgs) {
 		throw new Response("Not Found", { status: 404 });
 	}
 
-	const results = await getResultsForWodbyUserId(workout.id, "1", context);
+	const results = await getResultsForWodbyUserId(workout.id, session.userId, context);
 
 	return { workout, results };
 }

@@ -2,10 +2,11 @@ import { Link, useLoaderData } from "react-router"
 import { getAllWorkoutsWithMovements } from "~/lib/workouts";
 import type { Route } from "../+types/root";
 import WorkoutGrid from "~/components/workouts/workout-grid";
+import { requireAuth } from "~/middleware/auth";
 
-export async function loader({ context }: Route.LoaderArgs) {
+export async function loader({ request, context }: Route.LoaderArgs) {
+	const session = await requireAuth(request, context);
 	const allWorkouts = await getAllWorkoutsWithMovements({ context });
-
 	return { workouts: allWorkouts.workouts };
 }
 
