@@ -1,5 +1,8 @@
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "react-router";
 import type { LinksFunction } from "react-router";
+import type { Route } from "./+types/root";
+import { getSession } from "~/utils/session";
+import { Header } from "~/components/header";
 
 import "./tailwind.css";
 
@@ -16,7 +19,15 @@ export const links: LinksFunction = () => [
   },
 ];
 
+export async function loader({ request, context }: Route.LoaderArgs) {
+  const sessionId = request.headers.get("Cookie")?.match(/sessionId=([^;]+)/)?.[1];
+  const session = sessionId ? await getSession(context, sessionId) : null;
+  return { isAuthenticated: !!session };
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useLoaderData<typeof loader>();
+  
   return (
     <html lang="en">
       <head>
@@ -26,6 +37,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <Header isAuthenticated={isAuthenticated} />
         {children}
         <ScrollRestoration />
         <Scripts />
