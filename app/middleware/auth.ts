@@ -5,7 +5,8 @@ import { getSession } from "~/utils/session";
 export async function requireAuth(request: Request, context: Route.LoaderArgs["context"]) {
   const sessionId = request.headers.get("Cookie")?.match(/sessionId=([^;]+)/)?.[1];
 
-  if (!sessionId) {
+
+	  if (!sessionId) {
     throw redirect("/login");
   }
 

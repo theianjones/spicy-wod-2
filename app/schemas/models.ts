@@ -56,7 +56,10 @@ export const workoutSchema = baseIdSchema.extend({
     "feet",
     "points",
   ]).nullish(),
-  movements: z.array(z.string()).optional(),
+  movements: z.preprocess(
+    (value) => typeof value === 'string' ? value.split(',') : value,
+    z.array(z.string()).optional()
+  ),
 });
 
 // Workout Movements junction schema

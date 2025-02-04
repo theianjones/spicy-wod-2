@@ -3,7 +3,6 @@ import type { Route } from "../+types/root";
 import { AuthForm } from "~/components/auth-form";
 import { generateSalt, hashPassword, validatePassword } from "~/utils/auth";
 import { v4 as uuidv4 } from "uuid";
-import { createSession, createSessionCookie } from "~/utils/session";
 import { redirectIfAuthenticated } from "~/middleware/auth";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
@@ -25,6 +24,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 
   // Check if user already exists
   const existingUser = await db.prepare("SELECT * FROM users WHERE email = ?").bind(email).first();
+  console.log(existingUser)
   if (existingUser) {
     throw new Response("User already exists", { status: 400 });
   }
@@ -44,15 +44,8 @@ export async function action({ request, context }: Route.ActionArgs) {
     salt,
     new Date().toISOString()
   ).run();
-
-  // Create session
-  const { sessionId } = await createSession(context, userId, email);
-  
-  return redirect("/", {
-    headers: {
-      "Set-Cookie": createSessionCookie(sessionId),
-    },
-  });
+    
+  return redirect("/login");
 }
 
 export default function SignupPage() {

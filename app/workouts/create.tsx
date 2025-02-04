@@ -20,6 +20,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 
 	const data = extractFormData(workoutSchema.omit({ id: true }), formData);
 
+	console.log(data)
 	try {
 		if (data.movements) {
 			// verify all movements exist and get their IDs

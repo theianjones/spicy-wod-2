@@ -1,16 +1,8 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "@conform-to/react";
+import { parse } from "@conform-to/zod";
 import { Form } from "react-router";
 import { workoutSchema, type Workout } from "~/schemas/models";
 import { Button } from "~/components/ui/button";
-import {
-	Form as FormUI,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import {
 	Select,
@@ -22,288 +14,182 @@ import {
 import { Textarea } from "~/components/ui/textarea";
 import { useLoaderData } from "react-router";
 import { loader } from "~/workouts/create";
-import {
-	Command,
-	CommandEmpty,
-	CommandGroup,
-	CommandInput,
-	CommandItem,
-} from "~/components/ui/command";
-import { ScrollArea } from "~/components/ui/scroll-area";
-import { useState } from "react";
+import { MultiSelect } from "~/components/ui/multi-select";
+import { ConformSelect, ConformTextarea, ConformInput, ConformMultiSelect } from "./ui/conform";
 
 export function WorkoutForm() {
 	const { movements } = useLoaderData<typeof loader>();
-	const [searchQuery, setSearchQuery] = useState("");
-	const form = useForm<Workout>({
-		resolver: zodResolver(workoutSchema),
-		defaultValues: {
-			name: "",
-			description: "",
-			scheme: undefined,
-			movements: [],
-			repsPerRound: undefined,
-			roundsToScore: undefined,
-		},
+	const [form, fields] = useForm<Workout>({
+		id: "workout",
+		shouldValidate: "onSubmit",
+		onValidate: ({ formData }: { formData: FormData }) => 
+			parse(formData, { schema: workoutSchema })
 	});
 
-	const filteredMovements = movements.filter((movement) =>
-		movement.name.toLowerCase().includes(searchQuery.toLowerCase())
-	);
+	const defaultValue = fields.movements.defaultValue;
+	const selectedMovements = typeof defaultValue === 'string'
+		? defaultValue.split(',')
+		: (defaultValue || []);
 
+	const movementOptions = movements.map(movement => ({
+		value: movement.id,
+		label: movement.name
+	}));
+
+	const handleMovementsChange = (values: string[]) => {
+		const input = document.createElement('input');
+		input.type = 'hidden';
+		input.name = fields.movements.name;
+		input.value = values.join(',');
+		form.ref.current?.appendChild(input);
+		form.ref.current?.requestSubmit();
+	};
+
+	console.log(fields.movements)
 	return (
-		<Form
+		<form
 			method="post"
 			className="space-y-6 bg-white p-8 border-4 border-black"
-			style={{
-				boxShadow: "8px 8px 0px 0px rgba(0,0,0,1)",
-			}}
 		>
 			<h2 className="text-3xl font-bold tracking-tight text-black uppercase">
 				Create Workout
 			</h2>
 
-			<FormUI {...form}>
-				<div className="space-y-4">
-					<FormField
-						control={form.control}
-						name="name"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel className="text-sm font-bold uppercase">
-									Workout Name
-								</FormLabel>
-								<FormControl>
-									<Input
-										className="mt-1 block w-full px-3 py-2 bg-gray-100 border-2 border-black text-black placeholder:text-gray-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-black"
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage className="text-red-600" />
-							</FormItem>
-						)}
+			<div className="space-y-4">
+				<div>
+					<label
+						htmlFor={fields.name.id}
+						className="text-sm font-bold uppercase block"
+					>
+						Workout Name
+					</label>
+					<ConformInput	
+						config={fields.name}
+						className="mt-1 block w-full"
 					/>
+					{fields.name.errors && (
+						<div className="text-red-600 text-sm mt-1">
+							{fields.name.errors}
+						</div>
+					)}
+				</div>
 
-					<FormField
-						control={form.control}
-						name="description"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel className="text-sm font-bold uppercase">
-									Description
-								</FormLabel>
-								<FormControl>
-									<Textarea
-										className="mt-1 block w-full px-3 py-2 bg-gray-100 border-2 border-black text-black placeholder:text-gray-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-black"
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage className="text-red-600" />
-							</FormItem>
-						)}
+				<div>
+					<label
+						htmlFor={fields.description.id}
+						className="text-sm font-bold uppercase block"
+					>
+						Description
+					</label>
+					<ConformTextarea
+						config={fields.description}
+						className="mt-1 block w-full"
 					/>
+					{fields.description.errors && (
+						<div className="text-red-600 text-sm mt-1">
+							{fields.description.errors}
+						</div>
+					)}
+				</div>
 
-					<FormField
-						control={form.control}
-						name="scheme"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel className="text-sm font-bold uppercase">
-									Scoring Scheme
-								</FormLabel>
-								<Select
-									onValueChange={field.onChange}
-									defaultValue={field.value}
-									required
-								>
-									<FormControl>
-										<SelectTrigger className="mt-1 w-full px-3 py-2 bg-gray-100 border-2 border-black text-black">
-											<SelectValue placeholder="Select a scoring scheme" />
-										</SelectTrigger>
-									</FormControl>
-									<SelectContent>
-										<SelectItem value="time">Time</SelectItem>
-										<SelectItem value="time-with-cap">Time with Cap</SelectItem>
-										<SelectItem value="pass-fail">Pass/Fail</SelectItem>
-										<SelectItem value="rounds-reps">Rounds & Reps</SelectItem>
-										<SelectItem value="reps">Reps</SelectItem>
-										<SelectItem value="emom">EMOM</SelectItem>
-										<SelectItem value="load">Load</SelectItem>
-										<SelectItem value="calories">Calories</SelectItem>
-										<SelectItem value="meters">Meters</SelectItem>
-										<SelectItem value="feet">Feet</SelectItem>
-										<SelectItem value="points">Points</SelectItem>
-									</SelectContent>
-								</Select>
-								<input
-									type="hidden"
-									name="scheme"
-									value={field.value || undefined}
-								/>
-								<FormMessage className="text-red-600" />
-							</FormItem>
-						)}
+				<div>
+					<label
+						htmlFor={fields.scheme.id}
+						className="text-sm font-bold uppercase block"
+					>
+						Scoring Scheme
+					</label>
+					<ConformSelect
+						config={fields.scheme}
+						options={[
+							{ value: 'time', label: 'Time' },
+							{ value: 'time-with-cap', label: 'Time with Cap' },
+							{ value: 'pass-fail', label: 'Pass/Fail' },
+							{ value: 'rounds-reps', label: 'Rounds & Reps' },
+							{ value: 'reps', label: 'Reps' },
+							{ value: 'emom', label: 'EMOM' },
+							{ value: 'load', label: 'Load' },
+							{ value: 'calories', label: 'Calories' },
+							{ value: 'points', label: 'Points' },
+							{ value: 'meters', label: 'Meters' },
+							{ value: 'feet', label: 'Feet' },
+						]}
+						placeholder="Select a scoring scheme"
+						className="mt-1 block w-full"
 					/>
+					{fields.scheme.errors && (
+						<div className="text-red-600 text-sm mt-1">
+							{fields.scheme.errors}
+						</div>
+					)}
+				</div>
 
-					<div className="grid grid-cols-2 gap-4">
-						<FormField
-							control={form.control}
-							name="repsPerRound"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className="text-sm font-bold uppercase">
-										Reps Per Round
-									</FormLabel>
-									<FormControl>
-										<Input
-											type="number"
-											min="0"
-											className="mt-1 block w-full px-3 py-2 bg-gray-100 border-2 border-black text-black placeholder:text-gray-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-black"
-											{...field}
-											value={field.value ?? ""}
-											onChange={(e) => {
-												const value = e.target.value
-													? parseInt(e.target.value, 10)
-													: undefined;
-												field.onChange(value);
-											}}
-										/>
-									</FormControl>
-									<FormMessage className="text-red-600" />
-								</FormItem>
-							)}
+				<div className="grid grid-cols-2 gap-4">
+					<div>
+						<label
+							htmlFor={fields.repsPerRound.id}
+							className="text-sm font-bold uppercase block"
+						>
+							Reps Per Round
+						</label>
+						<ConformInput
+							config={fields.repsPerRound}
+							className="mt-1 block w-full"
 						/>
-
-						<FormField
-							control={form.control}
-							name="roundsToScore"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className="text-sm font-bold uppercase">
-										Rounds to Score
-									</FormLabel>
-									<FormControl>
-                    <Input
-											type="number"
-											min="0"
-											className="mt-1 block w-full px-3 py-2 bg-gray-100 border-2 border-black text-black placeholder:text-gray-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-black"
-											{...field}
-											value={field.value ?? ""}
-											onChange={(e) => {
-												const value = e.target.value
-													? parseInt(e.target.value, 10)
-													: undefined;
-												field.onChange(value);
-											}}
-										/>
-									</FormControl>
-									<FormMessage className="text-red-600" />
-								</FormItem>
-							)}
-						/>
+						{fields.repsPerRound.errors && (
+							<div className="text-red-600 text-sm mt-1">
+								{fields.repsPerRound.errors}
+							</div>
+						)}
 					</div>
 
-					<FormField
-						control={form.control}
-						name="movements"
-						render={({ field }) => (
-							<FormItem className="flex flex-col">
-								<FormLabel className="text-sm font-bold uppercase">
-									Movements
-								</FormLabel>
-								<FormControl>
-									<div className="border-2 border-black rounded-md">
-										<div className="p-2">
-											<Input
-												ref={field.ref}
-												placeholder="Search movements..."
-												value={searchQuery}
-												onChange={(e) => setSearchQuery(e.target.value)}
-												className="border-0 focus:ring-0"
-											/>
-										</div>
-										<ScrollArea className="h-72 w-full">
-											<div className="p-2">
-												{filteredMovements.length === 0 ? (
-													<p className="text-sm text-gray-500 p-2">
-														No movements found.
-													</p>
-												) : (
-													[...filteredMovements]
-														.sort((a, b) => {
-															const aSelected = field.value?.includes(a.id);
-															const bSelected = field.value?.includes(b.id);
-															if (aSelected === bSelected) {
-																// If both selected or both unselected, maintain alphabetical order
-																return a.name.localeCompare(b.name);
-															}
-															// Selected items come first
-															return aSelected ? -1 : 1;
-														})
-														.map((movement) => (
-															<div
-																key={movement.id}
-																className={`flex items-center gap-2 p-2 hover:bg-gray-100 cursor-pointer ${
-																	field.value?.includes(movement.id)
-																		? "bg-gray-50"
-																		: ""
-																}`}
-																onClick={() => {
-																	const isSelected = field.value?.includes(
-																		movement.id
-																	);
-																	const newValue = isSelected
-																		? field.value?.filter(
-																				(id) => id !== movement.id
-																		  )
-																		: [...(field.value || []), movement.id];
-																	field.onChange(newValue);
-																	setSearchQuery("");
-																	form.setFocus("movements");
-																}}
-															>
-																<input
-																	type="checkbox"
-																	checked={field.value?.includes(movement.id)}
-																	className="form-checkbox h-4 w-4 text-black border-black focus:ring-black"
-																	readOnly
-																/>
-																<span className="text-sm font-medium">
-																	{movement.name}
-																</span>
-																<span className="text-xs text-gray-500">
-																	({movement.type})
-																</span>
-															</div>
-														))
-												)}
-											</div>
-										</ScrollArea>
-									</div>
-								</FormControl>
-								<FormMessage className="text-red-600" />
-							</FormItem>
-						)}
-					/>
-
-					{/* Add hidden inputs for the movements array */}
-					{form.watch("movements")?.map((movementId) => (
-						<input
-							key={movementId}
-							type="hidden"
-							name="movements"
-							value={movementId}
+					<div>
+						<label
+							htmlFor={fields.roundsToScore.id}
+							className="text-sm font-bold uppercase block"
+						>
+							Rounds to Score
+						</label>
+						<ConformInput
+							config={fields.roundsToScore}
+							className="mt-1 block w-full"
 						/>
-					))}
-
-					<Button
-						type="submit"
-						className="w-full bg-black text-white px-4 py-3 uppercase font-bold hover:bg-gray-800 transition-colors"
-					>
-						Create Workout
-					</Button>
+						{fields.roundsToScore.errors && (
+							<div className="text-red-600 text-sm mt-1">
+								{fields.roundsToScore.errors}
+							</div>
+						)}
+					</div>
 				</div>
-			</FormUI>
-		</Form>
+
+				<div>
+					<label
+						htmlFor={fields.movements.id}
+						className="text-sm font-bold uppercase block"
+					>
+						Movements
+					</label>
+					<ConformMultiSelect
+						config={fields.movements}
+						options={movementOptions}
+						defaultValue={selectedMovements}
+						placeholder="Select movements..."
+						className="mt-1"
+					/>
+					{fields.movements.errors && (
+						<div className="text-red-600 text-sm mt-1">
+							{fields.movements.errors}
+						</div>
+					)}
+				</div>
+
+				<Button
+					type="submit"
+					className="w-full bg-black text-white px-4 py-3 uppercase font-bold hover:bg-gray-800 transition-colors"
+				>
+					Create Workout
+				</Button>
+			</div>
+		</form>
 	);
 }
