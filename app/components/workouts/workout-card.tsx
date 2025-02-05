@@ -19,7 +19,7 @@ export function WorkoutCard({ workout }: WorkoutCardProps) {
 	return (
 		<div className="relative h-full group">
 			{/* Shadow effect */}
-			<div className="absolute inset-0 bg-black translate-x-2 translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-300" />
+			<div className="absolute inset-0 bg-black translate-x-2 translate-y-2 group-hover:translate-x-1 group-hover:translate-y-1 transition-transform duration-300" />
 
 			{/* Card */}
 			<Card className="relative bg-white text-black border border-black h-full flex flex-col justify-between rounded-none">
