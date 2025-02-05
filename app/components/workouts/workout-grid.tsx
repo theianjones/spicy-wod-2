@@ -1,25 +1,9 @@
-import { useCallback, useMemo, useState } from "react";
-import { Input } from "~/components/ui/input";
 import { WorkoutCard } from "./workout-card";
 import type { Movement, Workout } from "~/schemas/models";
 import { Link } from "react-router";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "~/components/ui/select";
-import { MultiSelect } from "~/components/ui/multi-select";
 import { SearchAndFilters } from "./search-and-filters";
 
 export default function WorkoutsGrid({ workouts, movements }: { workouts: Workout[], movements: Movement[] }) {
-  const [filteredWorkouts, setFilteredWorkouts] = useState(workouts)
-	const memoizedWorkouts = useMemo(() => workouts, [workouts])
-	const handleFiltered = useCallback((workouts: Workout[]) => {
-		console.log("filtered workouts")
-		setFilteredWorkouts(workouts)
-	}, [])
 
 	return (
 		<div className="min-h-screen bg-white text-black">
@@ -40,7 +24,7 @@ export default function WorkoutsGrid({ workouts, movements }: { workouts: Workou
 				</div>
 
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-					{memoizedWorkouts.map((workout) => (
+					{workouts.map((workout) => (
 						<WorkoutCard key={workout.id} workout={workout} />
 					))}
 				</div>
