@@ -28,9 +28,9 @@ export function WorkoutForm({lastResult}: {lastResult?: SubmissionResult}) {
 			id={form.id}
 			onSubmit={form.onSubmit}
 		>
-			<h2 className="text-3xl font-bold tracking-tight text-black uppercase">
+			<h1 className="text-3xl font-bold tracking-tight text-black uppercase">
 				Create Workout
-			</h2>
+			</h1>
 
 			{form.errors && (
 				<FormError>{form.errors}</FormError>
