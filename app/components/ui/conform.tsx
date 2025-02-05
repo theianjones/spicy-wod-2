@@ -1,5 +1,5 @@
 import * as React from "react";
-import { type FieldConfig } from "@conform-to/react";
+import { type FieldMetadata } from "@conform-to/react";
 import { Input } from "./input";
 import { Textarea } from "./textarea";
 import {
@@ -20,41 +20,41 @@ import {
 } from "./form";
 
 interface FormFieldProps<T extends string | string[] | number | undefined> extends React.HTMLAttributes<HTMLDivElement> {
-  config: FieldConfig<T>;
+  meta: FieldMetadata<T>;
   label?: string;
   description?: string;
   type?: string;
 }
 
 export function ConformInput<T extends string | string[] | number | undefined>({
-  config,
+  meta,
   label,
   description,
   className,
-	type,
+  type,
   ...props
 }: FormFieldProps<T>) {
   return (
     <FormItem className={className} {...props}>
-      {label && <FormLabel htmlFor={config.id}>{label}</FormLabel>}
+      {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
       <FormControl>
         <Input 
-          name={config.name}
-          id={config.id}
-          defaultValue={config.defaultValue}
-          required={config.required}
-          aria-invalid={Boolean(config.error)}
+          name={meta.name}
+          id={meta.id}
+          defaultValue={meta.initialValue?.toString()}
+          required={meta.required}
+          aria-invalid={Boolean(meta.errors)}
           type={type}
         />
       </FormControl>
       {description && <FormDescription>{description}</FormDescription>}
-      <FormMessage>{config.error}</FormMessage>
+      <FormMessage>{meta.errors}</FormMessage>
     </FormItem>
   );
 }
 
 export function ConformTextarea<T extends string | string[] | number | undefined>({
-  config,
+  meta,
   label,
   description,
   className,
@@ -62,18 +62,18 @@ export function ConformTextarea<T extends string | string[] | number | undefined
 }: FormFieldProps<T>) {
   return (
     <FormItem className={className} {...props}>
-      {label && <FormLabel htmlFor={config.id}>{label}</FormLabel>}
+      {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
       <FormControl>
         <Textarea 
-          name={config.name}
-          id={config.id}
-          defaultValue={config.defaultValue}
-          required={config.required}
-          aria-invalid={Boolean(config.error)}
+          name={meta.name}
+          id={meta.id}
+          defaultValue={meta.initialValue?.toString()}
+          required={meta.required}
+          aria-invalid={Boolean(meta.errors)}
         />
       </FormControl>
       {description && <FormDescription>{description}</FormDescription>}
-      <FormMessage>{config.error}</FormMessage>
+      <FormMessage>{meta.errors}</FormMessage>
     </FormItem>
   );
 }
@@ -89,7 +89,7 @@ interface ConformSelectProps<T extends string | undefined> extends FormFieldProp
 }
 
 export function ConformSelect<T extends string | undefined>({
-  config,
+  meta,
   label,
   description,
   options,
@@ -99,13 +99,13 @@ export function ConformSelect<T extends string | undefined>({
 }: ConformSelectProps<T>) {
   return (
     <FormItem className={className} {...props}>
-      {label && <FormLabel htmlFor={config.id}>{label}</FormLabel>}
+      {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
       <Select
-        name={config.name}
-        defaultValue={config.defaultValue}
+        name={meta.name}
+        defaultValue={meta.initialValue?.toString()}
       >
         <FormControl>
-          <SelectTrigger id={config.id}>
+          <SelectTrigger id={meta.id}>
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
         </FormControl>
@@ -118,7 +118,7 @@ export function ConformSelect<T extends string | undefined>({
         </SelectContent>
       </Select>
       {description && <FormDescription>{description}</FormDescription>}
-      <FormMessage>{config.error}</FormMessage>
+      <FormMessage>{meta.errors}</FormMessage>
     </FormItem>
   );
 }
@@ -127,36 +127,36 @@ interface ConformMultiSelectProps<T extends string[] | undefined> extends FormFi
   options: SelectOption[];
   placeholder?: string;
   maxCount?: number;
-	onValueChange?: (values: string[]) => void;
+  onValueChange?: (values: string[]) => void;
 }
 
-export function ConformMultiSelect<T extends  string[] | undefined>({
-  config,
+export function ConformMultiSelect<T extends string[] | undefined>({
+  meta,
   label,
   description,
   options,
   placeholder,
   maxCount,
   className,
-	onValueChange,
+  onValueChange,
   ...props
 }: ConformMultiSelectProps<T>) {
   return (
     <FormItem className={className} {...props}>
-      {label && <FormLabel htmlFor={config.id}>{label}</FormLabel>}
+      {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
       <FormControl>
         <MultiSelect
-          name={config.name}
-          id={config.id}
+          name={meta.name}
+          id={meta.id}
           options={options}
-          defaultValue={typeof config.defaultValue === "string" ? config.defaultValue?.split(",") : config.defaultValue}
+          defaultValue={typeof meta.initialValue === "string" ? meta.initialValue.split(",") : meta.initialValue as string[]}
           placeholder={placeholder}
           maxCount={maxCount}
           onValueChange={onValueChange}
         />
       </FormControl>
       {description && <FormDescription>{description}</FormDescription>}
-      <FormMessage>{config.error}</FormMessage>
+      <FormMessage>{meta.errors}</FormMessage>
     </FormItem>
   );
 }
@@ -169,7 +169,7 @@ interface ConformComboboxProps<T extends string | undefined> extends FormFieldPr
 }
 
 export function ConformCombobox<T extends string | undefined>({
-  config,
+  meta,
   label,
   description,
   options,
@@ -181,15 +181,15 @@ export function ConformCombobox<T extends string | undefined>({
 }: ConformComboboxProps<T>) {
   return (
     <FormItem className={className} {...props}>
-      {label && <FormLabel htmlFor={config.id}>{label}</FormLabel>}
+      {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
       <FormControl>
         <Combobox
           options={options}
-          value={config.defaultValue ? [config.defaultValue] : []}
+          value={meta.initialValue ? [meta.initialValue.toString()] : []}
           onSelect={(value) => {
             const input = document.createElement('input');
             input.type = 'hidden';
-            input.name = config.name;
+            input.name = meta.name;
             input.value = value;
             input.form?.requestSubmit();
           }}
@@ -199,7 +199,7 @@ export function ConformCombobox<T extends string | undefined>({
         />
       </FormControl>
       {description && <FormDescription>{description}</FormDescription>}
-      <FormMessage>{config.error}</FormMessage>
+      <FormMessage>{meta.errors}</FormMessage>
     </FormItem>
   );
 } 

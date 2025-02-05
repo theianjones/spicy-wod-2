@@ -1,14 +1,14 @@
-import { redirect } from "react-router";
+import { redirect, useActionData } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import type { Route } from "../+types/root";
 import { WorkoutForm } from "~/components/workout-form";
-import { Workout, workoutSchema } from "~/schemas/models";
+import { workoutSchema } from "~/schemas/models";
 import { getAllMovements } from "~/lib/movements";
-import { extractFormData } from "~/utils/extract-form-data";
 import { requireAuth } from "~/middleware/auth";
+import { parseWithZod } from "@conform-to/zod";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
-	const session = await requireAuth(request, context);
+	await requireAuth(request, context);
 	return getAllMovements({ context });
 }
 
@@ -18,9 +18,14 @@ export async function action({ request, context }: Route.ActionArgs) {
 	const formData = await request.formData();
 	const workoutId = uuidv4();
 
-	const data = extractFormData(workoutSchema.omit({ id: true }), formData);
+	const submission = await parseWithZod(formData, { schema: workoutSchema.omit({ id: true }) });
 
-	console.log(data)
+	if(submission.status !== "success") {
+		return submission.reply();
+	}
+
+	const data = submission.value;
+
 	try {
 		if (data.movements) {
 			// verify all movements exist and get their IDs
@@ -86,14 +91,12 @@ export async function action({ request, context }: Route.ActionArgs) {
 		return redirect("/workouts");
 	} catch (error) {
 		console.error("Error creating workout:", error);
-		throw new Response(
-			error instanceof Error ? error.message : "Invalid form data",
-			{ status: 400 }
-		);
+		return submission.reply({formErrors: ["Internal server error"]});
 	}
 }
 
 export default function CreateWorkoutPage() {
+	const lastResult = useActionData<typeof action>();
 	return (
 		<div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 			<div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -103,7 +106,7 @@ export default function CreateWorkoutPage() {
 			</div>
 
 			<div className="sm:mx-auto sm:w-full sm:max-w-xl">
-				<WorkoutForm />
+				<WorkoutForm lastResult={lastResult} />
 			</div>
 		</div>
 	);

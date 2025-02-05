@@ -1,9 +1,11 @@
-import { redirect } from "react-router";
+import { redirect, useActionData } from "react-router";
 import type { Route } from "../+types/root";
 import { AuthForm } from "~/components/auth-form";
 import { generateSalt, hashPassword, validatePassword } from "~/utils/auth";
 import { v4 as uuidv4 } from "uuid";
 import { redirectIfAuthenticated } from "~/middleware/auth";
+import { parseWithZod } from "@conform-to/zod";
+import { signupSchema } from "~/schemas/auth";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   await redirectIfAuthenticated(request, context);
@@ -13,20 +15,20 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 export async function action({ request, context }: Route.ActionArgs) {
   const db = context.cloudflare.env.DB;
   const formData = await request.formData();
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-
-  // Validate password
-  const passwordError = validatePassword(password);
-  if (passwordError) {
-    throw new Response(passwordError, { status: 400 });
+  const submission = parseWithZod(formData, { schema: signupSchema });
+  
+  if (submission.status !== "success") {
+    return submission.reply();
   }
+  const { email, password } = submission.value;
 
   // Check if user already exists
   const existingUser = await db.prepare("SELECT * FROM users WHERE email = ?").bind(email).first();
-  console.log(existingUser)
+
   if (existingUser) {
-    throw new Response("User already exists", { status: 400 });
+    return submission.reply({
+      formErrors: ["User already exists"],
+    });
   }
 
   // Create new user
@@ -49,9 +51,10 @@ export async function action({ request, context }: Route.ActionArgs) {
 }
 
 export default function SignupPage() {
+  const lastResult = useActionData<typeof action>();
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col py-12 sm:px-6 lg:px-8">
-      <AuthForm mode="signup" />
+      <AuthForm mode="signup" lastResult={lastResult} />
     </div>
   );
 }

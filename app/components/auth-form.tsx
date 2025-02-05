@@ -1,5 +1,5 @@
-import { useForm } from "@conform-to/react";
-import { parse } from "@conform-to/zod";
+import { SubmissionResult, useForm } from "@conform-to/react";
+import { parseWithZod } from "@conform-to/zod";
 import { Form } from "react-router";
 import {
 	loginSchema,
@@ -8,21 +8,21 @@ import {
 	type SignupFormData,
 } from "~/schemas/auth";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { useState } from "react";
 import { ConformInput } from "./ui/conform";
+import { FormLabel, FormError } from "./ui/form";
 
 interface AuthFormProps {
 	mode: "signup" | "login";
+	lastResult?: SubmissionResult;
 }
 
-export function AuthForm({ mode }: AuthFormProps) {
-	const [error, setError] = useState<string | null>(null);
+export function AuthForm({ mode, lastResult }: AuthFormProps) {
 	const [form, fields] = useForm<LoginFormData | SignupFormData>({
 		id: mode,
-		shouldValidate: "onBlur",
+		shouldValidate: "onSubmit",
+		lastResult,
 		onValidate: ({ formData }: { formData: FormData }) => 
-			parse(formData, { schema: mode === "signup" ? signupSchema : loginSchema }),
+			parseWithZod(formData, { schema: mode === "signup" ? signupSchema : loginSchema }),
 	});
 
 	return (
@@ -33,48 +33,35 @@ export function AuthForm({ mode }: AuthFormProps) {
 				style={{
 					boxShadow: "8px 8px 0px 0px rgba(0,0,0,1)",
 				}}
-				{...form.props}
+				id={form.id}
+				onSubmit={form.onSubmit}
 			>
 				<h1 className="text-3xl font-bold tracking-tight text-black uppercase">
 					{mode === "signup" ? "Sign Up" : "Log In"}
 				</h1>
 
+				<FormError>{form.errors}</FormError>
+
 				<div className="space-y-4">
 					<div>
-						<label 
-							htmlFor={fields.email.id}
-							className="text-sm font-bold uppercase block"
-						>
+						<FormLabel htmlFor={fields.email.id}>
 							Email
-						</label>
+						</FormLabel>
 						<ConformInput
-							config={fields.email}
+							meta={fields.email}
 							className="mt-1 block w-full"
-						/>
-						{fields.email.errors && (
-							<div className="text-red-600 text-sm mt-1">
-								{fields.email.errors}
-							</div>
-						)}
+							/>
 					</div>
 
 					<div>
-						<label 
-							htmlFor={fields.password.id}
-							className="text-sm font-bold uppercase block"
-						>
+						<FormLabel htmlFor={fields.password.id}>
 							Password
-						</label>
+						</FormLabel>
 						<ConformInput
-							config={fields.password}
+							meta={fields.password}
 							type="password"
 							className="mt-1 block w-full"
 						/>
-						{fields.password.errors && (
-							<div className="text-red-600 text-sm mt-1">
-								{fields.password.errors}
-							</div>
-						)}
 					</div>
 
 					<Button
@@ -83,12 +70,6 @@ export function AuthForm({ mode }: AuthFormProps) {
 					>
 						{mode === "signup" ? "Create Account" : "Sign In"}
 					</Button>
-
-					{error && (
-						<div className="p-3 text-sm bg-red-100 border-2 border-red-600 text-red-600 rounded">
-							{error}
-						</div>
-					)}
 				</div>
 
 				<div className="text-center">
