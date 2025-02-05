@@ -14,34 +14,7 @@ import { MultiSelect } from "~/components/ui/multi-select";
 import { SearchAndFilters } from "./search-and-filters";
 
 export default function WorkoutsGrid({ workouts }: { workouts: Workout[] }) {
-	const [searchQuery, setSearchQuery] = useState("");
-	const [selectedScheme, setSelectedScheme] = useState<string>("all");
-	const [selectedMovements, setSelectedMovements] = useState<string[]>([]);
-
-	const uniqueSchemes = Array.from(new Set(workouts.map((w) => w.scheme)));
-	const uniqueMovements = Array.from(
-		new Set(workouts.flatMap((w) => w.movements ?? []))
-	).sort();
-
-
-	const filteredWorkouts = workouts.filter((workout) => {
-		const matchesSearch =
-			workout.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			workout.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			workout.movements?.some((movement) =>
-				movement?.toLowerCase().includes(searchQuery.toLowerCase())
-			);
-
-		const matchesScheme =
-			selectedScheme === "all" || workout.scheme === selectedScheme;
-		const matchesMovements =
-			selectedMovements.length === 0 ||
-			selectedMovements.every((movement) =>
-				workout.movements?.includes(movement)
-			);
-
-		return matchesSearch && matchesScheme && matchesMovements;
-	});
+  const [filteredWorkouts, setFilteredWorkouts] = useState(workouts)
 
 	return (
 		<div className="min-h-screen bg-white text-black">
@@ -49,14 +22,8 @@ export default function WorkoutsGrid({ workouts }: { workouts: Workout[] }) {
 				<div className="relative mt-8 space-y-4">
 					<div className="flex items-center justify-between gap-4">
             <SearchAndFilters
-              searchQuery={searchQuery}
-              selectedScheme={selectedScheme}
-              selectedMovements={selectedMovements}
-              uniqueSchemes={uniqueSchemes}
-              uniqueMovements={uniqueMovements}
-              onSearchChange={setSearchQuery}
-              onSchemeChange={setSelectedScheme}
-              onMovementsChange={setSelectedMovements}
+                workouts={workouts}
+                onFiltered={setFilteredWorkouts}
             />
 
 						<Link
