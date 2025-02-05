@@ -1,6 +1,9 @@
 import { workoutSchema } from "~/schemas/models";
 import type { Route } from "../+types/root";
 import { z } from "zod";
+import { drizzle } from "drizzle-orm/d1";
+import { and, eq, inArray, like, sql } from "drizzle-orm";
+import * as schema from "../../db/schema";
 
 export const workoutFiltersSchema = z.object({
   name: z.string().optional().nullable(),
@@ -17,67 +20,67 @@ export async function getAllWorkoutsWithMovements({
   context: Route.LoaderArgs["context"],
   filters?: WorkoutFilters
 }) {
-  const db = context.cloudflare.env.DB;
+  const db = drizzle(context.cloudflare.env.DB, { schema });
   
-  let query = `
-    SELECT 
-      w.*,
-      GROUP_CONCAT(m.id) as movement_ids,
-      GROUP_CONCAT(m.name) as movement_names,
-      GROUP_CONCAT(m.type) as movement_types
-    FROM workouts w
-    LEFT JOIN workout_movements wm ON w.id = wm.workout_id
-    LEFT JOIN movements m ON wm.movement_id = m.id
-  `;
+  const baseQuery = db
+    .select({
+      id: schema.workouts.id,
+      name: schema.workouts.name,
+      description: schema.workouts.description,
+      scheme: schema.workouts.scheme,
+      repsPerRound: schema.workouts.repsPerRound,
+      roundsToScore: schema.workouts.roundsToScore,
+      tiebreakScheme: schema.workouts.tiebreakScheme,
+      secondaryScheme: schema.workouts.secondaryScheme,
+      movement_ids: sql<string>`GROUP_CONCAT(${schema.movements.id})`,
+      movement_names: sql<string>`GROUP_CONCAT(${schema.movements.name})`,
+      movement_types: sql<string>`GROUP_CONCAT(${schema.movements.type})`
+    })
+    .from(schema.workouts)
+    .leftJoin(schema.workoutMovements, eq(schema.workouts.id, schema.workoutMovements.workoutId))
+    .leftJoin(schema.movements, eq(schema.workoutMovements.movementId, schema.movements.id));
 
-  const conditions: string[] = [];
-  const params: any[] = [];
+  const conditions = [];
 
   if (filters.name) {
-    conditions.push("LOWER(w.name) LIKE ?");
-    params.push(`%${filters.name.toLowerCase()}%`);
+    conditions.push(like(sql`LOWER(${schema.workouts.name})`, `%${filters.name.toLowerCase()}%`));
   }
 
   if (filters.scheme && filters.scheme !== "all") {
-    conditions.push("w.scheme = ?");
-    params.push(filters.scheme);
+    conditions.push(eq(schema.workouts.scheme, filters.scheme as any));
   }
 
   if (filters.movements && filters.movements.length > 0) {
-    const movementPlaceholders = filters.movements.map(() => "?").join(",");
-    conditions.push(`w.id IN (
-      SELECT workout_id 
-      FROM workout_movements wm2 
-      JOIN movements m2 ON wm2.movement_id = m2.id 
-      WHERE m2.id IN (${movementPlaceholders})
-      GROUP BY workout_id 
-      HAVING COUNT(DISTINCT m2.id) = ?
-    )`);
-    params.push(...filters.movements, filters.movements.length);
+    const movementSubquery = db
+      .select({ workoutId: schema.workoutMovements.workoutId })
+      .from(schema.workoutMovements)
+      .where(inArray(schema.workoutMovements.movementId, filters.movements))
+      .groupBy(schema.workoutMovements.workoutId)
+      .having(sql`COUNT(DISTINCT ${schema.workoutMovements.movementId}) = ${filters.movements.length}`);
+
+    conditions.push(inArray(schema.workouts.id, movementSubquery));
   }
 
-  if (conditions.length > 0) {
-    query += ` WHERE ${conditions.join(" AND ")}`;
-  }
+  const query = conditions.length > 0
+    ? baseQuery.where(and(...conditions))
+    : baseQuery;
 
-  query += " GROUP BY w.id";
+  const finalQuery = query.groupBy(schema.workouts.id);
+  const result = await finalQuery;
 
-  const result = await db.prepare(query).bind(...params).all();
-
-  const workouts = result.results.map((workout) => {
+  const workouts = result.map((workout) => {
     return workoutSchema.transform((data) => ({
       ...data,
-      movements: workout.movement_names ?
-        (workout.movement_names as string).split(',').map(movement => movement.trim())
+      movements: workout.movement_names
+        ? String(workout.movement_names).split(',').map(movement => movement.trim())
         : []
-    })).parse(workout)
+    })).parse(workout);
   });
 
   return {
     workouts
-  }
+  };
 }
-
 
 export async function getWorkoutWithMovementsByIdOrName(idOrName: string, context: Route.LoaderArgs["context"]) {
 

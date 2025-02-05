@@ -56,7 +56,7 @@ function WorkoutCard({ workout }: WorkoutCardProps) {
 				</CardHeader>
 
 				<CardContent className=" p-6 space-y-4">
-					{(workout.roundsToScore || workout.repsPerRound) && (
+					{(Boolean(workout.roundsToScore) || Boolean(workout.repsPerRound)) && (
 						<div className="grid grid-cols-2 gap-4">
 							{workout.repsPerRound && (
 								<div className="space-y-1">
