@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Input } from "~/components/ui/input";
 import { WorkoutCard } from "./workout-card";
-import type { Workout } from "~/schemas/models";
+import type { Movement, Workout } from "~/schemas/models";
 import { Link } from "react-router";
 import {
 	Select,
@@ -13,8 +13,13 @@ import {
 import { MultiSelect } from "~/components/ui/multi-select";
 import { SearchAndFilters } from "./search-and-filters";
 
-export default function WorkoutsGrid({ workouts }: { workouts: Workout[] }) {
+export default function WorkoutsGrid({ workouts, movements }: { workouts: Workout[], movements: Movement[] }) {
   const [filteredWorkouts, setFilteredWorkouts] = useState(workouts)
+	const memoizedWorkouts = useMemo(() => workouts, [workouts])
+	const handleFiltered = useCallback((workouts: Workout[]) => {
+		console.log("filtered workouts")
+		setFilteredWorkouts(workouts)
+	}, [])
 
 	return (
 		<div className="min-h-screen bg-white text-black">
@@ -22,8 +27,7 @@ export default function WorkoutsGrid({ workouts }: { workouts: Workout[] }) {
 				<div className="relative mt-8 space-y-4">
 					<div className="flex items-center justify-between gap-4">
             <SearchAndFilters
-                workouts={workouts}
-                onFiltered={setFilteredWorkouts}
+                movements={movements}
             />
 
 						<Link
@@ -36,7 +40,7 @@ export default function WorkoutsGrid({ workouts }: { workouts: Workout[] }) {
 				</div>
 
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-					{filteredWorkouts.map((workout) => (
+					{memoizedWorkouts.map((workout) => (
 						<WorkoutCard key={workout.id} workout={workout} />
 					))}
 				</div>

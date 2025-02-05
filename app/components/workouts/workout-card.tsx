@@ -11,11 +11,13 @@ import type { Workout } from "~/schemas/models";
 import { WorkoutSchemeIcon } from "./workout-scheme-icon";
 import { Link } from "react-router";
 import { ArrowRight } from "lucide-react";
+import { memo } from "react";
+
 interface WorkoutCardProps {
 	workout: Workout;
 }
 
-export function WorkoutCard({ workout }: WorkoutCardProps) {
+function WorkoutCard({ workout }: WorkoutCardProps) {
 	return (
 		<div className="relative h-full group">
 			{/* Shadow effect */}
@@ -112,3 +114,7 @@ export function WorkoutCard({ workout }: WorkoutCardProps) {
 		</div>
 	);
 }
+
+const MemoizedWorkoutCard = memo(WorkoutCard);
+
+export { MemoizedWorkoutCard as WorkoutCard };
