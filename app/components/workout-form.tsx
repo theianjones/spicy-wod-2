@@ -7,14 +7,17 @@ import { loader } from "~/workouts/create";
 import { ConformSelect, ConformTextarea, ConformInput, ConformMultiSelect } from "./ui/conform";
 import { FormLabel, FormError } from "./ui/form";
 
+type FormWorkout = Omit<Workout, "id">;
+const formWorkoutSchema = workoutSchema.omit({ id: true });
+
 export function WorkoutForm({lastResult}: {lastResult?: SubmissionResult}) {
 	const { movements } = useLoaderData<typeof loader>();
-	const [form, fields] = useForm<Workout>({
+	const [form, fields] = useForm<FormWorkout>({
 		id: "workout",
 		shouldValidate: "onSubmit",
 		lastResult,
 		onValidate: ({ formData }: { formData: FormData }) => 
-			parseWithZod(formData, { schema: workoutSchema })
+			parseWithZod(formData, { schema: formWorkoutSchema })
 	});
 	const movementOptions = movements.map(movement => ({
 		value: movement.id,
