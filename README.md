@@ -49,16 +49,19 @@ This project has been upgraded from Remix v2 to React Router v7 following the [o
 ## Local Development
 
 Before starting local development, make sure you have the following prerequisites:
+
 - Node.js installed
 - pnpm installed (`npm install -g pnpm`)
 - Wrangler CLI installed (`pnpm install -g wrangler`)
 
 1. Install dependencies:
+
 ```sh
 pnpm install
 ```
 
 2. Set up your local database:
+
 ```sh
 # Create a local D1 database
 wrangler d1 create dev-spicy-wod
@@ -81,6 +84,7 @@ CLOUDFLARE_D1_TOKEN=your_d1_token
 ```
 
 4. Start the development server:
+
 ```sh
 pnpm dev
 ```
@@ -88,6 +92,7 @@ pnpm dev
 The application should now be running at `http://localhost:5173`
 
 To run with Wrangler (simulating production environment):
+
 ```sh
 pnpm build
 pnpm start
@@ -105,6 +110,7 @@ pnpm db:studio
 ```
 
 This will open a web interface where you can:
+
 - Browse your database tables
 - View and edit records
 - Run SQL queries

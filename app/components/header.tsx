@@ -1,11 +1,11 @@
-import { Link, Form } from "react-router";
-import { Button } from "./ui/button";
+import {Link, Form} from 'react-router'
+import {Button} from './ui/button'
 
 interface HeaderProps {
-  isAuthenticated?: boolean;
+  isAuthenticated?: boolean
 }
 
-export function Header({ isAuthenticated }: HeaderProps) {
+export function Header({isAuthenticated}: HeaderProps) {
   return (
     <header className="border-b border-gray-200 bg-white">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -16,11 +16,14 @@ export function Header({ isAuthenticated }: HeaderProps) {
         <nav>
           {isAuthenticated ? (
             <div className="flex items-center gap-4">
-              <Link to="/workouts" className="text-sm font-medium hover:text-gray-600">
+              <Link
+                to="/workouts"
+                className="text-sm font-medium hover:text-gray-600"
+              >
                 Workouts
               </Link>
               <Form action="/logout" method="post">
-                <Button 
+                <Button
                   type="submit"
                   variant="ghost"
                   className="text-sm font-medium hover:text-gray-600"
@@ -31,7 +34,7 @@ export function Header({ isAuthenticated }: HeaderProps) {
             </div>
           ) : (
             <div className="flex items-center gap-4">
-              <Link 
+              <Link
                 to="/login"
                 className="text-sm font-medium hover:text-gray-600"
               >
@@ -48,5 +51,5 @@ export function Header({ isAuthenticated }: HeaderProps) {
         </nav>
       </div>
     </header>
-  );
-} 
+  )
+}

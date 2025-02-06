@@ -11,6 +11,7 @@
     "start": "wrangler dev",
     "typecheck": "react-router typegen && tsc",
     "typegen": "wrangler types",
+    "format": "prettier --write .",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio --config drizzle.studio.config.ts",
     "db:seed": "wrangler d1 execute dev-spicy-db --local --file ./seed.sql",
@@ -52,6 +53,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250204.0",
+    "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
     "@react-router/dev": "^7.0.0",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",

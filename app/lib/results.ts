@@ -1,10 +1,16 @@
-import { Route } from "../+types/root";
-import { allWodResultSchema, } from "~/schemas/models";
+import {Route} from '../+types/root'
+import {allWodResultSchema} from '~/schemas/models'
 
-export async function getResultsForWodbyUserId(workoutId: string, userId: string, context: Route.LoaderArgs["context"]) {
-  const db = context.cloudflare.env.DB;
+export async function getResultsForWodbyUserId(
+  workoutId: string,
+  userId: string,
+  context: Route.LoaderArgs['context'],
+) {
+  const db = context.cloudflare.env.DB
 
-  const result = await db.prepare(`
+  const result = await db
+    .prepare(
+      `
     SELECT 
     results.id,
     results.user_id as userId,
@@ -22,7 +28,10 @@ export async function getResultsForWodbyUserId(workoutId: string, userId: string
         AND wod_results.workout_id = ?
         AND results.type = 'wod'
     ORDER BY results.date desc, wod_sets.set_number;
-  `).bind(userId, workoutId).all()
+  `,
+    )
+    .bind(userId, workoutId)
+    .all()
 
-  return result.results.map((result) => allWodResultSchema.parse(result));;
+  return result.results.map((result) => allWodResultSchema.parse(result))
 }

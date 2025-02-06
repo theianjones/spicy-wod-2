@@ -42,12 +42,8 @@
           "name": "monostructural_results_id_results_id_fk",
           "tableFrom": "monostructural_results",
           "tableTo": "results",
-          "columnsFrom": [
-            "id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -55,12 +51,8 @@
           "name": "monostructural_results_movement_id_movements_id_fk",
           "tableFrom": "monostructural_results",
           "tableTo": "movements",
-          "columnsFrom": [
-            "movement_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["movement_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -114,12 +106,8 @@
           "name": "monostructural_sets_result_id_monostructural_results_id_fk",
           "tableFrom": "monostructural_sets",
           "tableTo": "monostructural_results",
-          "columnsFrom": [
-            "result_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["result_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -204,12 +192,8 @@
           "name": "results_user_id_users_id_fk",
           "tableFrom": "results",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -249,12 +233,8 @@
           "name": "strength_results_id_results_id_fk",
           "tableFrom": "strength_results",
           "tableTo": "results",
-          "columnsFrom": [
-            "id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -262,12 +242,8 @@
           "name": "strength_results_movement_id_movements_id_fk",
           "tableFrom": "strength_results",
           "tableTo": "movements",
-          "columnsFrom": [
-            "movement_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["movement_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -328,12 +304,8 @@
           "name": "strength_sets_result_id_strength_results_id_fk",
           "tableFrom": "strength_sets",
           "tableTo": "strength_results",
-          "columnsFrom": [
-            "result_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["result_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -398,9 +370,7 @@
       "indexes": {
         "users_email_unique": {
           "name": "users_email_unique",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": true
         }
       },
@@ -440,12 +410,8 @@
           "name": "wod_results_id_results_id_fk",
           "tableFrom": "wod_results",
           "tableTo": "results",
-          "columnsFrom": [
-            "id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -453,12 +419,8 @@
           "name": "wod_results_workout_id_workouts_id_fk",
           "tableFrom": "wod_results",
           "tableTo": "workouts",
-          "columnsFrom": [
-            "workout_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["workout_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -505,12 +467,8 @@
           "name": "wod_sets_result_id_wod_results_id_fk",
           "tableFrom": "wod_sets",
           "tableTo": "wod_results",
-          "columnsFrom": [
-            "result_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["result_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -550,12 +508,8 @@
           "name": "workout_movements_workout_id_workouts_id_fk",
           "tableFrom": "workout_movements",
           "tableTo": "workouts",
-          "columnsFrom": [
-            "workout_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["workout_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -563,12 +517,8 @@
           "name": "workout_movements_movement_id_movements_id_fk",
           "tableFrom": "workout_movements",
           "tableTo": "movements",
-          "columnsFrom": [
-            "movement_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["movement_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -664,12 +614,8 @@
           "name": "workouts_user_id_users_id_fk",
           "tableFrom": "workouts",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

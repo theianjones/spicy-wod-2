@@ -12,9 +12,9 @@
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "types": [
-        "@react-router/cloudflare",
-        "vite/client",
-        "@cloudflare/workers-types/2023-07-01"
+      "@react-router/cloudflare",
+      "vite/client",
+      "@cloudflare/workers-types/2023-07-01"
     ],
     "isolatedModules": true,
     "esModuleInterop": true,

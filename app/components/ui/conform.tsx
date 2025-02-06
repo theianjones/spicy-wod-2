@@ -1,29 +1,30 @@
-import * as React from "react";
-import { type FieldMetadata } from "@conform-to/react";
-import { Input } from "./input";
-import { Textarea } from "./textarea";
+import * as React from 'react'
+import {type FieldMetadata} from '@conform-to/react'
+import {Input} from './input'
+import {Textarea} from './textarea'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./select";
-import { MultiSelect } from "./multi-select";
-import { Combobox } from "./combobox";
+} from './select'
+import {MultiSelect} from './multi-select'
+import {Combobox} from './combobox'
 import {
   FormControl,
   FormDescription,
   FormItem,
   FormLabel,
   FormMessage,
-} from "./form";
+} from './form'
 
-interface FormFieldProps<T extends string | string[] | number | undefined> extends React.HTMLAttributes<HTMLDivElement> {
-  meta: FieldMetadata<T>;
-  label?: string;
-  description?: string;
-  type?: string;
+interface FormFieldProps<T extends string | string[] | number | undefined>
+  extends React.HTMLAttributes<HTMLDivElement> {
+  meta: FieldMetadata<T>
+  label?: string
+  description?: string
+  type?: string
 }
 
 export function ConformInput<T extends string | string[] | number | undefined>({
@@ -38,7 +39,7 @@ export function ConformInput<T extends string | string[] | number | undefined>({
     <FormItem className={className} {...props}>
       {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
       <FormControl>
-        <Input 
+        <Input
           name={meta.name}
           id={meta.id}
           defaultValue={meta.initialValue?.toString()}
@@ -50,21 +51,17 @@ export function ConformInput<T extends string | string[] | number | undefined>({
       {description && <FormDescription>{description}</FormDescription>}
       <FormMessage>{meta.errors}</FormMessage>
     </FormItem>
-  );
+  )
 }
 
-export function ConformTextarea<T extends string | string[] | number | undefined>({
-  meta,
-  label,
-  description,
-  className,
-  ...props
-}: FormFieldProps<T>) {
+export function ConformTextarea<
+  T extends string | string[] | number | undefined,
+>({meta, label, description, className, ...props}: FormFieldProps<T>) {
   return (
     <FormItem className={className} {...props}>
       {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
       <FormControl>
-        <Textarea 
+        <Textarea
           name={meta.name}
           id={meta.id}
           defaultValue={meta.initialValue?.toString()}
@@ -75,17 +72,18 @@ export function ConformTextarea<T extends string | string[] | number | undefined
       {description && <FormDescription>{description}</FormDescription>}
       <FormMessage>{meta.errors}</FormMessage>
     </FormItem>
-  );
+  )
 }
 
 interface SelectOption {
-  value: string;
-  label: string;
+  value: string
+  label: string
 }
 
-interface ConformSelectProps<T extends string | undefined> extends FormFieldProps<T> {
-  options: SelectOption[];
-  placeholder?: string;
+interface ConformSelectProps<T extends string | undefined>
+  extends FormFieldProps<T> {
+  options: SelectOption[]
+  placeholder?: string
 }
 
 export function ConformSelect<T extends string | undefined>({
@@ -100,10 +98,7 @@ export function ConformSelect<T extends string | undefined>({
   return (
     <FormItem className={className} {...props}>
       {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
-      <Select
-        name={meta.name}
-        defaultValue={meta.initialValue?.toString()}
-      >
+      <Select name={meta.name} defaultValue={meta.initialValue?.toString()}>
         <FormControl>
           <SelectTrigger id={meta.id}>
             <SelectValue placeholder={placeholder} />
@@ -120,14 +115,15 @@ export function ConformSelect<T extends string | undefined>({
       {description && <FormDescription>{description}</FormDescription>}
       <FormMessage>{meta.errors}</FormMessage>
     </FormItem>
-  );
+  )
 }
 
-interface ConformMultiSelectProps<T extends string[] | undefined> extends FormFieldProps<T> {
-  options: SelectOption[];
-  placeholder?: string;
-  maxCount?: number;
-  onValueChange?: (values: string[]) => void;
+interface ConformMultiSelectProps<T extends string[] | undefined>
+  extends FormFieldProps<T> {
+  options: SelectOption[]
+  placeholder?: string
+  maxCount?: number
+  onValueChange?: (values: string[]) => void
 }
 
 export function ConformMultiSelect<T extends string[] | undefined>({
@@ -149,7 +145,11 @@ export function ConformMultiSelect<T extends string[] | undefined>({
           name={meta.name}
           id={meta.id}
           options={options}
-          defaultValue={typeof meta.initialValue === "string" ? meta.initialValue.split(",") : meta.initialValue as string[]}
+          defaultValue={
+            typeof meta.initialValue === 'string'
+              ? meta.initialValue.split(',')
+              : (meta.initialValue as string[])
+          }
           placeholder={placeholder}
           maxCount={maxCount}
           onValueChange={onValueChange}
@@ -158,14 +158,15 @@ export function ConformMultiSelect<T extends string[] | undefined>({
       {description && <FormDescription>{description}</FormDescription>}
       <FormMessage>{meta.errors}</FormMessage>
     </FormItem>
-  );
+  )
 }
 
-interface ConformComboboxProps<T extends string | undefined> extends FormFieldProps<T> {
-  options: SelectOption[];
-  placeholder?: string;
-  searchPlaceholder?: string;
-  emptyMessage?: string;
+interface ConformComboboxProps<T extends string | undefined>
+  extends FormFieldProps<T> {
+  options: SelectOption[]
+  placeholder?: string
+  searchPlaceholder?: string
+  emptyMessage?: string
 }
 
 export function ConformCombobox<T extends string | undefined>({
@@ -187,11 +188,11 @@ export function ConformCombobox<T extends string | undefined>({
           options={options}
           value={meta.initialValue ? [meta.initialValue.toString()] : []}
           onSelect={(value) => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = meta.name;
-            input.value = value;
-            input.form?.requestSubmit();
+            const input = document.createElement('input')
+            input.type = 'hidden'
+            input.name = meta.name
+            input.value = value
+            input.form?.requestSubmit()
           }}
           placeholder={placeholder}
           searchPlaceholder={searchPlaceholder}
@@ -201,5 +202,5 @@ export function ConformCombobox<T extends string | undefined>({
       {description && <FormDescription>{description}</FormDescription>}
       <FormMessage>{meta.errors}</FormMessage>
     </FormItem>
-  );
-} 
+  )
+}

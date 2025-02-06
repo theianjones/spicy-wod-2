@@ -1,21 +1,17 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import { Check, ChevronsUpDown } from "lucide-react"
-import { cn } from "~/lib/utils"
-import { Button } from "~/components/ui/button"
+import * as React from 'react'
+import {Check, ChevronsUpDown} from 'lucide-react'
+import {cn} from '~/lib/utils'
+import {Button} from '~/components/ui/button'
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from "~/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/components/ui/popover"
+} from '~/components/ui/command'
+import {Popover, PopoverContent, PopoverTrigger} from '~/components/ui/popover'
 
 export type Option = {
   value: string
@@ -37,19 +33,19 @@ export function Combobox({
   options = [],
   value = [],
   onSelect,
-  placeholder = "Select options...",
-  searchPlaceholder = "Search options...",
-  emptyMessage = "No options found.",
+  placeholder = 'Select options...',
+  searchPlaceholder = 'Search options...',
+  emptyMessage = 'No options found.',
   className,
   triggerText,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
-  const [searchValue, setSearchValue] = React.useState("")
+  const [searchValue, setSearchValue] = React.useState('')
 
   const filteredOptions = React.useMemo(() => {
     if (!searchValue) return options
     return options.filter((option) =>
-      option.label.toLowerCase().includes(searchValue.toLowerCase())
+      option.label.toLowerCase().includes(searchValue.toLowerCase()),
     )
   }, [options, searchValue])
 
@@ -61,21 +57,24 @@ export function Combobox({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "w-full justify-between bg-gray-100 border-2 border-black text-black hover:bg-gray-200 hover:text-black",
-            className
+            'w-full justify-between bg-gray-100 border-2 border-black text-black hover:bg-gray-200 hover:text-black',
+            className,
           )}
         >
           {triggerText || placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0 border-2 border-black" align="start">
+      <PopoverContent
+        className="w-full p-0 border-2 border-black"
+        align="start"
+      >
         <Command>
-          <CommandInput 
-            placeholder={searchPlaceholder} 
+          <CommandInput
+            placeholder={searchPlaceholder}
             value={searchValue}
             onValueChange={setSearchValue}
-            className="border-0 focus:ring-0" 
+            className="border-0 focus:ring-0"
           />
           <CommandEmpty>{emptyMessage}</CommandEmpty>
           <CommandGroup className="max-h-64 overflow-auto">
@@ -92,8 +91,8 @@ export function Combobox({
                 >
                   <div
                     className={cn(
-                      "h-4 w-4 border-2 border-black flex items-center justify-center",
-                      isSelected ? "bg-black" : "bg-white"
+                      'h-4 w-4 border-2 border-black flex items-center justify-center',
+                      isSelected ? 'bg-black' : 'bg-white',
                     )}
                   >
                     {isSelected && <Check className="h-3 w-3 text-white" />}
@@ -107,4 +106,4 @@ export function Combobox({
       </PopoverContent>
     </Popover>
   )
-} 
+}
