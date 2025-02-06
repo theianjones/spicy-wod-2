@@ -1,25 +1,15 @@
-import * as React from "react";
-import { type FieldMetadata } from "@conform-to/react";
-import { Input } from "./input";
-import { Textarea } from "./textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./select";
-import { MultiSelect } from "./multi-select";
-import { Combobox } from "./combobox";
-import {
-  FormControl,
-  FormDescription,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "./form";
+import * as React from 'react';
+import { type FieldMetadata } from '@conform-to/react';
 
-interface FormFieldProps<T extends string | string[] | number | undefined> extends React.HTMLAttributes<HTMLDivElement> {
+import { Combobox } from './combobox';
+import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from './form';
+import { Input } from './input';
+import { MultiSelect } from './multi-select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
+import { Textarea } from './textarea';
+
+interface FormFieldProps<T extends string | string[] | number | undefined>
+  extends React.HTMLAttributes<HTMLDivElement> {
   meta: FieldMetadata<T>;
   label?: string;
   description?: string;
@@ -38,7 +28,7 @@ export function ConformInput<T extends string | string[] | number | undefined>({
     <FormItem className={className} {...props}>
       {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
       <FormControl>
-        <Input 
+        <Input
           name={meta.name}
           id={meta.id}
           defaultValue={meta.initialValue?.toString()}
@@ -64,7 +54,7 @@ export function ConformTextarea<T extends string | string[] | number | undefined
     <FormItem className={className} {...props}>
       {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
       <FormControl>
-        <Textarea 
+        <Textarea
           name={meta.name}
           id={meta.id}
           defaultValue={meta.initialValue?.toString()}
@@ -100,17 +90,14 @@ export function ConformSelect<T extends string | undefined>({
   return (
     <FormItem className={className} {...props}>
       {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
-      <Select
-        name={meta.name}
-        defaultValue={meta.initialValue?.toString()}
-      >
+      <Select name={meta.name} defaultValue={meta.initialValue?.toString()}>
         <FormControl>
           <SelectTrigger id={meta.id}>
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
         </FormControl>
         <SelectContent>
-          {options.map((option) => (
+          {options.map(option => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
             </SelectItem>
@@ -149,7 +136,11 @@ export function ConformMultiSelect<T extends string[] | undefined>({
           name={meta.name}
           id={meta.id}
           options={options}
-          defaultValue={typeof meta.initialValue === "string" ? meta.initialValue.split(",") : meta.initialValue as string[]}
+          defaultValue={
+            typeof meta.initialValue === 'string'
+              ? meta.initialValue.split(',')
+              : (meta.initialValue as string[])
+          }
           placeholder={placeholder}
           maxCount={maxCount}
           onValueChange={onValueChange}
@@ -186,7 +177,7 @@ export function ConformCombobox<T extends string | undefined>({
         <Combobox
           options={options}
           value={meta.initialValue ? [meta.initialValue.toString()] : []}
-          onSelect={(value) => {
+          onSelect={value => {
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = meta.name;
@@ -202,4 +193,4 @@ export function ConformCombobox<T extends string | undefined>({
       <FormMessage>{meta.errors}</FormMessage>
     </FormItem>
   );
-} 
+}

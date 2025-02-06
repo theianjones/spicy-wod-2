@@ -20,7 +20,7 @@ export async function createSession(
 ): Promise<{ sessionId: string; session: Session }> {
   const sessionId = uuidv4();
   const now = Math.floor(Date.now() / 1000);
-  
+
   const session: Session = {
     id: sessionId,
     userId,
@@ -29,11 +29,9 @@ export async function createSession(
     expiresAt: now + SESSION_DURATION,
   };
 
-  await context.cloudflare.env.USER_SESSIONS.put(
-    sessionId,
-    JSON.stringify(session),
-    { expirationTtl: SESSION_DURATION }
-  );
+  await context.cloudflare.env.USER_SESSIONS.put(sessionId, JSON.stringify(session), {
+    expirationTtl: SESSION_DURATION,
+  });
 
   return { sessionId, session };
 }
@@ -43,7 +41,7 @@ export async function getSession(
   sessionId: string
 ): Promise<Session | null> {
   const sessionData = await context.cloudflare.env.USER_SESSIONS.get(sessionId);
-  
+
   if (!sessionData) {
     return null;
   }
@@ -91,4 +89,4 @@ export async function requireSession(
 
 export function createSessionCookie(sessionId: string): string {
   return `sessionId=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${SESSION_DURATION}`;
-} 
+}

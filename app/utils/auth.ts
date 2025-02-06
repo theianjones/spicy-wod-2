@@ -1,4 +1,4 @@
-import { randomBytes, pbkdf2Sync } from 'crypto';
+import { pbkdf2Sync, randomBytes } from 'crypto';
 
 const ITERATIONS = 100000;
 const KEYLEN = 64;
@@ -22,4 +22,4 @@ export function validatePassword(password: string): string | null {
     return 'Password must be at least 8 characters long';
   }
   return null;
-} 
+}

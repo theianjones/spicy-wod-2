@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // Base schemas for common fields
 const baseIdSchema = z.object({
@@ -8,17 +8,20 @@ const baseIdSchema = z.object({
 // Users schema
 export const userSchema = baseIdSchema.extend({
   email: z.string().email(),
-  joined_at: z.date({coerce: true}),
+  joined_at: z.date({ coerce: true }),
   hashed_password: z.string(),
   password_salt: z.string(),
   password_reset_token: z.string().nullable(),
-  password_reset_expires: z.date().nullable().transform((date) => date ? new Date(date) : null),
+  password_reset_expires: z
+    .date()
+    .nullable()
+    .transform(date => (date ? new Date(date) : null)),
 });
 
 // Movements schema
 export const movementSchema = baseIdSchema.extend({
   name: z.string(),
-  type: z.enum(["strength", "gymnastic", "monostructural"]),
+  type: z.enum(['strength', 'gymnastic', 'monostructural']),
 });
 
 // Workouts schema
@@ -26,38 +29,40 @@ export const workoutSchema = baseIdSchema.extend({
   name: z.string(),
   description: z.string(),
   scheme: z.enum([
-    "time",
-    "time-with-cap",
-    "pass-fail",
-    "rounds-reps",
-    "reps",
-    "emom",
-    "load",
-    "calories",
-    "meters",
-    "feet",
-    "points",
+    'time',
+    'time-with-cap',
+    'pass-fail',
+    'rounds-reps',
+    'reps',
+    'emom',
+    'load',
+    'calories',
+    'meters',
+    'feet',
+    'points',
   ]),
   createdAt: z.number().int().optional(),
   repsPerRound: z.coerce.number().int().optional(),
   roundsToScore: z.coerce.number().int().optional(),
   userId: z.string().uuid().optional(),
   sugarId: z.string().optional(),
-  tiebreakScheme: z.enum(["time", "reps"]).nullish(),
-  secondaryScheme: z.enum([
-    "time",
-    "pass-fail",
-    "rounds-reps",
-    "reps",
-    "emom",
-    "load",
-    "calories",
-    "meters",
-    "feet",
-    "points",
-  ]).nullish(),
+  tiebreakScheme: z.enum(['time', 'reps']).nullish(),
+  secondaryScheme: z
+    .enum([
+      'time',
+      'pass-fail',
+      'rounds-reps',
+      'reps',
+      'emom',
+      'load',
+      'calories',
+      'meters',
+      'feet',
+      'points',
+    ])
+    .nullish(),
   movements: z.preprocess(
-    (value) => typeof value === 'string' ? value.split(',') : value,
+    value => (typeof value === 'string' ? value.split(',') : value),
     z.array(z.string()).optional()
   ),
 });
@@ -79,7 +84,7 @@ export const baseResultSchema = baseIdSchema.extend({
 // WOD Results schema
 export const wodResultSchema = baseIdSchema.extend({
   workoutId: z.string().uuid(),
-  scale: z.enum(["rx", "scaled", "rx+"]),
+  scale: z.enum(['rx', 'scaled', 'rx+']),
 });
 
 // WOD Sets schema
@@ -89,7 +94,9 @@ export const wodSetSchema = baseIdSchema.extend({
   setNumber: z.number().int(),
 });
 
-export const allWodResultSchema = baseResultSchema.merge(wodResultSchema).merge(wodSetSchema.omit({resultId: true}));
+export const allWodResultSchema = baseResultSchema
+  .merge(wodResultSchema)
+  .merge(wodSetSchema.omit({ resultId: true }));
 
 // Strength Results schema
 export const strengthResultSchema = baseIdSchema.extend({
@@ -102,7 +109,7 @@ export const strengthSetSchema = baseIdSchema.extend({
   resultId: z.string().uuid(),
   setNumber: z.number().int(),
   reps: z.number().int(),
-  status: z.enum(["pass", "fail"]),
+  status: z.enum(['pass', 'fail']),
   weight: z.number().int(),
 });
 
@@ -133,4 +140,4 @@ export type AllWodResult = z.infer<typeof allWodResultSchema>;
 export type StrengthResult = z.infer<typeof strengthResultSchema>;
 export type StrengthSet = z.infer<typeof strengthSetSchema>;
 export type MonostructuralResult = z.infer<typeof monostructuralResultSchema>;
-export type MonostructuralSet = z.infer<typeof monostructuralSetSchema>; 
+export type MonostructuralSet = z.infer<typeof monostructuralSetSchema>;

@@ -1,11 +1,11 @@
-import { redirect, useActionData } from "react-router";
-import type { Route } from "../+types/root";
-import { AuthForm } from "~/components/auth-form";
-import { generateSalt, hashPassword, validatePassword } from "~/utils/auth";
-import { v4 as uuidv4 } from "uuid";
-import { redirectIfAuthenticated } from "~/middleware/auth";
-import { parseWithZod } from "@conform-to/zod";
-import { signupSchema } from "~/schemas/auth";
+import { parseWithZod } from '@conform-to/zod';
+import { redirect, useActionData } from 'react-router';
+import { v4 as uuidv4 } from 'uuid';
+import { generateSalt, hashPassword } from '~/utils/auth';
+import { AuthForm } from '~/components/auth-form';
+import { redirectIfAuthenticated } from '~/middleware/auth';
+import { signupSchema } from '~/schemas/auth';
+import type { Route } from '../+types/root';
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   await redirectIfAuthenticated(request, context);
@@ -16,18 +16,18 @@ export async function action({ request, context }: Route.ActionArgs) {
   const db = context.cloudflare.env.DB;
   const formData = await request.formData();
   const submission = parseWithZod(formData, { schema: signupSchema });
-  
-  if (submission.status !== "success") {
+
+  if (submission.status !== 'success') {
     return submission.reply();
   }
   const { email, password } = submission.value;
 
   // Check if user already exists
-  const existingUser = await db.prepare("SELECT * FROM users WHERE email = ?").bind(email).first();
+  const existingUser = await db.prepare('SELECT * FROM users WHERE email = ?').bind(email).first();
 
   if (existingUser) {
     return submission.reply({
-      formErrors: ["User already exists"],
+      formErrors: ['User already exists'],
     });
   }
 
@@ -36,18 +36,17 @@ export async function action({ request, context }: Route.ActionArgs) {
   const salt = generateSalt();
   const hash = hashPassword(password, salt);
 
-  await db.prepare(`
+  await db
+    .prepare(
+      `
     INSERT INTO users (id, email, hashed_password, password_salt, joined_at) 
     VALUES (?, ?, ?, ?, ?)
-  `).bind(
-    userId,
-    email,
-    hash,
-    salt,
-    new Date().toISOString()
-  ).run();
-    
-  return redirect("/login");
+  `
+    )
+    .bind(userId, email, hash, salt, new Date().toISOString())
+    .run();
+
+  return redirect('/login');
 }
 
 export default function SignupPage() {

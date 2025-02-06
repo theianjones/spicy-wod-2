@@ -5,7 +5,7 @@ interface Env {
   USER_SESSIONS: KVNamespace;
 }
 
-declare module "@cloudflare/workers-types" {
+declare module '@cloudflare/workers-types' {
   export interface PlatformProxy {
     env: Env;
   }
