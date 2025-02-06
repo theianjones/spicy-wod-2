@@ -98,12 +98,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 export default function CreateWorkoutPage() {
 	const lastResult = useActionData<typeof action>();
 	return (
-		<div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-			<div className="sm:mx-auto sm:w-full sm:max-w-md">
-				<h1 className="text-center text-4xl font-black uppercase mb-8">
-					Spicy WOD
-				</h1>
-			</div>
+		<div className="min-h-screen bg-gray-50 flex flex-col py-12 sm:px-6 lg:px-8">
 
 			<div className="sm:mx-auto sm:w-full sm:max-w-xl">
 				<WorkoutForm lastResult={lastResult} />
