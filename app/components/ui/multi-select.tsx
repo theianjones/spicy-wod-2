@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { CheckIcon, ChevronDown, WandSparkles, XCircle, XIcon } from 'lucide-react';
-
 import { cn } from '~/lib/utils';
 import { Badge } from './badge';
 import { Button } from './button';
@@ -117,6 +116,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
       animation = 0,
       maxCount = 3,
       modalPopover = false,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       asChild = false,
       className,
       name,

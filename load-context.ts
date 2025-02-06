@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import { type PlatformProxy } from 'wrangler';
 
 type GetLoadContextArgs = {
@@ -11,7 +12,6 @@ type GetLoadContextArgs = {
 };
 
 declare module 'react-router' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface AppLoadContext extends ReturnType<typeof getLoadContext> {}
 }
 

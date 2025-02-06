@@ -1,8 +1,7 @@
 import { parseWithZod } from '@conform-to/zod';
 import { redirect, useActionData } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
-
-import { generateSalt, hashPassword, validatePassword } from '~/utils/auth';
+import { generateSalt, hashPassword } from '~/utils/auth';
 import { AuthForm } from '~/components/auth-form';
 import { redirectIfAuthenticated } from '~/middleware/auth';
 import { signupSchema } from '~/schemas/auth';

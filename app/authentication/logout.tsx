@@ -1,5 +1,3 @@
-import { redirect } from 'react-router';
-
 import { destroySession } from '~/utils/session';
 import type { Route } from '../+types/root';
 

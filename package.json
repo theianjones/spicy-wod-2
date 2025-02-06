@@ -7,7 +7,8 @@
     "build": "react-router build",
     "deploy": "wrangler deploy",
     "dev": "react-router dev",
-    "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
+    "lint": "eslint . --cache --cache-location ./node_modules/.cache/eslint",
+    "lint:fix": "eslint . --cache --cache-location ./node_modules/.cache/eslint --fix",
     "start": "wrangler dev",
     "typecheck": "react-router typegen && tsc",
     "typegen": "wrangler types",
@@ -20,7 +21,9 @@
     "db:list:production": "wrangler d1 migrations list dev-spicy-db --env production",
     "db:apply": "drizzle-kit generate && wrangler d1 migrations apply dev-spicy-db --local",
     "db:apply:preview": "wrangler d1 migrations apply dev-spicy-db --env preview",
-    "db:apply:production": "wrangler d1 migrations apply dev-spicy-db --env production"
+    "db:apply:production": "wrangler d1 migrations apply dev-spicy-db --env production",
+    "prepare": "husky install",
+    "lint-staged": "lint-staged"
   },
   "dependencies": {
     "@conform-to/react": "^1.2.2",
@@ -53,6 +56,8 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250204.0",
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.19.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
     "@react-router/dev": "^7.0.0",
     "@types/react": "^19.0.8",
@@ -70,6 +75,8 @@
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^5.1.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.4.3",
     "postcss": "^8.4.38",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
@@ -83,5 +90,14 @@
   "engines": {
     "node": ">=20.0.0"
   },
-  "packageManager": "pnpm@9.15.2+sha512.93e57b0126f0df74ce6bff29680394c0ba54ec47246b9cf321f0121d8d9bb03f750a705f24edc3c1180853afd7c2c3b94196d0a3d53d3e069d9e2793ef11f321"
+  "packageManager": "pnpm@9.15.2+sha512.93e57b0126f0df74ce6bff29680394c0ba54ec47246b9cf321f0121d8d9bb03f750a705f24edc3c1180853afd7c2c3b94196d0a3d53d3e069d9e2793ef11f321",
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,md,json}": [
+      "prettier --write"
+    ]
+  }
 }

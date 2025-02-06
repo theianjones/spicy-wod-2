@@ -1,8 +1,7 @@
 import { createRequestHandler, type ServerBuild } from 'react-router';
-
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore This file won’t exist if it hasn’t yet been built
-import * as build from './build/server'; // eslint-disable-line import/no-unresolved
+import * as build from './build/server';
 import { getLoadContext } from './load-context';
 
 const handleRequest = createRequestHandler(build as unknown as ServerBuild);

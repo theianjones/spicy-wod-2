@@ -1,15 +1,16 @@
+/* eslint-disable react/prop-types */
 import * as React from 'react';
 import { type DialogProps } from '@radix-ui/react-dialog';
 import { Command as CommandPrimitive } from 'cmdk';
 import { Search } from 'lucide-react';
-
 import { Dialog, DialogContent } from '~/components/ui/dialog';
 import { cn } from '~/lib/utils';
 
-const Command = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive>
->(({ className, ...props }, ref) => (
+const Command = ({
+  className,
+  ref,
+  ...props
+}: React.ComponentPropsWithRef<typeof CommandPrimitive>) => (
   <CommandPrimitive
     ref={ref}
     className={cn(
@@ -18,8 +19,7 @@ const Command = React.forwardRef<
     )}
     {...props}
   />
-));
-Command.displayName = CommandPrimitive.displayName;
+);
 
 const CommandDialog = ({ children, ...props }: DialogProps) => {
   return (
@@ -37,6 +37,7 @@ const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
+  // eslint-disable-next-line react/no-unknown-property
   <div className="flex items-center border-b px-3" cmdk-input-wrapper="">
     <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
     <CommandPrimitive.Input

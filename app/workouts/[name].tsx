@@ -1,6 +1,5 @@
 import { CalendarDays, Trophy, X } from 'lucide-react';
 import { useLoaderData } from 'react-router';
-
 import { formatTime } from '~/utils/format-time';
 import { Button } from '~/components/ui/button';
 import { WorkoutSchemeIcon } from '~/components/workouts/workout-scheme-icon';
@@ -9,12 +8,6 @@ import { getWorkoutWithMovementsByIdOrName } from '~/lib/workouts';
 import { requireAuth } from '~/middleware/auth';
 import { AllWodResult } from '~/schemas/models';
 import type { Route } from '../+types/root';
-
-interface WorkoutPageProps {
-  params: {
-    name: string;
-  };
-}
 
 export async function loader({ request, context, params }: Route.LoaderArgs) {
   const session = await requireAuth(request, context);
@@ -34,8 +27,8 @@ export async function loader({ request, context, params }: Route.LoaderArgs) {
   return { workout, results };
 }
 
-export default function WorkoutPage({ params }: WorkoutPageProps) {
-  let { workout, results } = useLoaderData<typeof loader>();
+export default function WorkoutPage() {
+  const { workout, results } = useLoaderData<typeof loader>();
 
   return (
     <div className="bg-white p-4 font-mono max-w-screen-xl mx-auto">
@@ -107,16 +100,22 @@ export default function WorkoutPage({ params }: WorkoutPageProps) {
           </div>
           <form className="space-y-6">
             <div className="grid gap-2">
-              <label className="text-xl font-bold">TIME</label>
+              <label className="text-xl font-bold" htmlFor="time">
+                TIME
+              </label>
               <input
+                id="time"
                 type="text"
                 className="border-4 border-black p-4 text-2xl font-mono"
                 placeholder="00:00"
               />
             </div>
             <div className="grid gap-2">
-              <label className="text-xl font-bold">NOTES</label>
+              <label className="text-xl font-bold" htmlFor="notes">
+                NOTES
+              </label>
               <textarea
+                id="notes"
                 className="border-4 border-black p-4 text-xl font-mono min-h-[100px]"
                 placeholder="How did it go?"
               />
