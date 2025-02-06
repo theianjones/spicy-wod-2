@@ -1,11 +1,12 @@
-import {output, z, ZodTypeAny} from 'zod'
-import {workoutSchema} from '~/schemas/models'
+import { output, z, ZodTypeAny } from 'zod';
 
-type ParsedData<T extends ZodTypeAny> = output<T>
+import { workoutSchema } from '~/schemas/models';
+
+type ParsedData<T extends ZodTypeAny> = output<T>;
 
 export function extractFormData<T extends ZodTypeAny>(
   zodSchema: T,
-  formData: FormData,
+  formData: FormData
 ): ParsedData<T> {
   const data = [...formData.entries()].reduce<
     Record<string, FormDataEntryValue | FormDataEntryValue[]>
@@ -19,8 +20,8 @@ export function extractFormData<T extends ZodTypeAny>(
             : [data[key], value]
           : value,
     }),
-    {},
-  )
+    {}
+  );
 
-  return zodSchema.parse(data)
+  return zodSchema.parse(data);
 }

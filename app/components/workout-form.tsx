@@ -1,33 +1,29 @@
-import {useForm, type SubmissionResult} from '@conform-to/react'
-import {parseWithZod} from '@conform-to/zod'
-import {workoutSchema, type Workout} from '~/schemas/models'
-import {Button} from '~/components/ui/button'
-import {useLoaderData} from 'react-router'
-import {loader} from '~/workouts/create'
-import {
-  ConformSelect,
-  ConformTextarea,
-  ConformInput,
-  ConformMultiSelect,
-} from './ui/conform'
-import {FormLabel, FormError} from './ui/form'
+import { useForm, type SubmissionResult } from '@conform-to/react';
+import { parseWithZod } from '@conform-to/zod';
+import { useLoaderData } from 'react-router';
 
-type FormWorkout = Omit<Workout, 'id'>
-const formWorkoutSchema = workoutSchema.omit({id: true})
+import { Button } from '~/components/ui/button';
+import { workoutSchema, type Workout } from '~/schemas/models';
+import { loader } from '~/workouts/create';
+import { ConformInput, ConformMultiSelect, ConformSelect, ConformTextarea } from './ui/conform';
+import { FormError, FormLabel } from './ui/form';
 
-export function WorkoutForm({lastResult}: {lastResult?: SubmissionResult}) {
-  const {movements} = useLoaderData<typeof loader>()
+type FormWorkout = Omit<Workout, 'id'>;
+const formWorkoutSchema = workoutSchema.omit({ id: true });
+
+export function WorkoutForm({ lastResult }: { lastResult?: SubmissionResult }) {
+  const { movements } = useLoaderData<typeof loader>();
   const [form, fields] = useForm<FormWorkout>({
     id: 'workout',
     shouldValidate: 'onSubmit',
     lastResult,
-    onValidate: ({formData}: {formData: FormData}) =>
-      parseWithZod(formData, {schema: formWorkoutSchema}),
-  })
-  const movementOptions = movements.map((movement) => ({
+    onValidate: ({ formData }: { formData: FormData }) =>
+      parseWithZod(formData, { schema: formWorkoutSchema }),
+  });
+  const movementOptions = movements.map(movement => ({
     value: movement.id,
     label: movement.name,
-  }))
+  }));
 
   return (
     <form
@@ -36,56 +32,42 @@ export function WorkoutForm({lastResult}: {lastResult?: SubmissionResult}) {
       id={form.id}
       onSubmit={form.onSubmit}
     >
-      <h1 className="text-3xl font-bold tracking-tight text-black uppercase">
-        Create Workout
-      </h1>
+      <h1 className="text-3xl font-bold tracking-tight text-black uppercase">Create Workout</h1>
 
       {form.errors && <FormError>{form.errors}</FormError>}
       <div className="space-y-4">
         <div>
-          <FormLabel
-            htmlFor={fields.name.id}
-            className="text-sm font-bold uppercase block"
-          >
+          <FormLabel htmlFor={fields.name.id} className="text-sm font-bold uppercase block">
             Workout Name
           </FormLabel>
           <ConformInput meta={fields.name} className="mt-1 block w-full" />
         </div>
 
         <div>
-          <FormLabel
-            htmlFor={fields.description.id}
-            className="text-sm font-bold uppercase block"
-          >
+          <FormLabel htmlFor={fields.description.id} className="text-sm font-bold uppercase block">
             Description
           </FormLabel>
-          <ConformTextarea
-            meta={fields.description}
-            className="mt-1 block w-full"
-          />
+          <ConformTextarea meta={fields.description} className="mt-1 block w-full" />
         </div>
 
         <div>
-          <FormLabel
-            htmlFor={fields.scheme.id}
-            className="text-sm font-bold uppercase block"
-          >
+          <FormLabel htmlFor={fields.scheme.id} className="text-sm font-bold uppercase block">
             Scoring Scheme
           </FormLabel>
           <ConformSelect
             meta={fields.scheme}
             options={[
-              {value: 'time', label: 'Time'},
-              {value: 'time-with-cap', label: 'Time with Cap'},
-              {value: 'pass-fail', label: 'Pass/Fail'},
-              {value: 'rounds-reps', label: 'Rounds & Reps'},
-              {value: 'reps', label: 'Reps'},
-              {value: 'emom', label: 'EMOM'},
-              {value: 'load', label: 'Load'},
-              {value: 'calories', label: 'Calories'},
-              {value: 'points', label: 'Points'},
-              {value: 'meters', label: 'Meters'},
-              {value: 'feet', label: 'Feet'},
+              { value: 'time', label: 'Time' },
+              { value: 'time-with-cap', label: 'Time with Cap' },
+              { value: 'pass-fail', label: 'Pass/Fail' },
+              { value: 'rounds-reps', label: 'Rounds & Reps' },
+              { value: 'reps', label: 'Reps' },
+              { value: 'emom', label: 'EMOM' },
+              { value: 'load', label: 'Load' },
+              { value: 'calories', label: 'Calories' },
+              { value: 'points', label: 'Points' },
+              { value: 'meters', label: 'Meters' },
+              { value: 'feet', label: 'Feet' },
             ]}
             placeholder="Select a scoring scheme"
             className="mt-1 block w-full"
@@ -94,23 +76,13 @@ export function WorkoutForm({lastResult}: {lastResult?: SubmissionResult}) {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <FormLabel htmlFor={fields.repsPerRound.id}>
-              Reps Per Round
-            </FormLabel>
-            <ConformInput
-              meta={fields.repsPerRound}
-              className="mt-1 block w-full"
-            />
+            <FormLabel htmlFor={fields.repsPerRound.id}>Reps Per Round</FormLabel>
+            <ConformInput meta={fields.repsPerRound} className="mt-1 block w-full" />
           </div>
 
           <div>
-            <FormLabel htmlFor={fields.roundsToScore.id}>
-              Rounds to Score
-            </FormLabel>
-            <ConformInput
-              meta={fields.roundsToScore}
-              className="mt-1 block w-full"
-            />
+            <FormLabel htmlFor={fields.roundsToScore.id}>Rounds to Score</FormLabel>
+            <ConformInput meta={fields.roundsToScore} className="mt-1 block w-full" />
           </div>
         </div>
 
@@ -132,5 +104,5 @@ export function WorkoutForm({lastResult}: {lastResult?: SubmissionResult}) {
         </Button>
       </div>
     </form>
-  )
+  );
 }

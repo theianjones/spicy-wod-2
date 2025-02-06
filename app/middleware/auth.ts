@@ -1,43 +1,37 @@
-import {redirect} from 'react-router'
-import type {Route} from '../+types/root'
-import {getSession} from '~/utils/session'
+import { redirect } from 'react-router';
 
-export async function requireAuth(
-  request: Request,
-  context: Route.LoaderArgs['context'],
-) {
-  const sessionId = request.headers
-    .get('Cookie')
-    ?.match(/sessionId=([^;]+)/)?.[1]
+import { getSession } from '~/utils/session';
+import type { Route } from '../+types/root';
+
+export async function requireAuth(request: Request, context: Route.LoaderArgs['context']) {
+  const sessionId = request.headers.get('Cookie')?.match(/sessionId=([^;]+)/)?.[1];
 
   if (!sessionId) {
-    throw redirect('/login')
+    throw redirect('/login');
   }
 
-  const session = await getSession(context, sessionId)
+  const session = await getSession(context, sessionId);
 
   if (!session) {
-    throw redirect('/login')
+    throw redirect('/login');
   }
 
-  return session
+  return session;
 }
 
 export async function redirectIfAuthenticated(
   request: Request,
-  context: Route.LoaderArgs['context'],
+  context: Route.LoaderArgs['context']
 ) {
-  const sessionId = request.headers
-    .get('Cookie')
-    ?.match(/sessionId=([^;]+)/)?.[1]
+  const sessionId = request.headers.get('Cookie')?.match(/sessionId=([^;]+)/)?.[1];
 
   if (!sessionId) {
-    return
+    return;
   }
 
-  const session = await getSession(context, sessionId)
+  const session = await getSession(context, sessionId);
 
   if (session) {
-    throw redirect('/')
+    throw redirect('/');
   }
 }

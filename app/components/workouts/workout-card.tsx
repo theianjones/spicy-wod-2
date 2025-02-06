@@ -1,3 +1,8 @@
+import { memo } from 'react';
+import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router';
+
+import { Badge } from '~/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -5,19 +10,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '~/components/ui/card'
-import {Badge} from '~/components/ui/badge'
-import type {Workout} from '~/schemas/models'
-import {WorkoutSchemeIcon} from './workout-scheme-icon'
-import {Link} from 'react-router'
-import {ArrowRight} from 'lucide-react'
-import {memo} from 'react'
+} from '~/components/ui/card';
+import type { Workout } from '~/schemas/models';
+import { WorkoutSchemeIcon } from './workout-scheme-icon';
 
 interface WorkoutCardProps {
-  workout: Workout
+  workout: Workout;
 }
 
-function WorkoutCard({workout}: WorkoutCardProps) {
+function WorkoutCard({ workout }: WorkoutCardProps) {
   return (
     <div className="relative h-full group">
       {/* Shadow effect */}
@@ -28,17 +29,12 @@ function WorkoutCard({workout}: WorkoutCardProps) {
         <CardHeader className="space-y-4 p-6">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <CardTitle className="text-xl font-bold">
-                {workout.name}
-              </CardTitle>
+              <CardTitle className="text-xl font-bold">{workout.name}</CardTitle>
             </div>
           </div>
 
           <div className="space-y-1">
-            <Badge
-              variant="outline"
-              className="bg-white text-black border-black rounded-none"
-            >
+            <Badge variant="outline" className="bg-white text-black border-black rounded-none">
               <WorkoutSchemeIcon scheme={workout.scheme} />
               <span className="ml-1 uppercase text-xs">{workout.scheme}</span>
             </Badge>
@@ -52,14 +48,11 @@ function WorkoutCard({workout}: WorkoutCardProps) {
         </CardHeader>
 
         <CardContent className=" p-6 space-y-4">
-          {(Boolean(workout.roundsToScore) ||
-            Boolean(workout.repsPerRound)) && (
+          {(Boolean(workout.roundsToScore) || Boolean(workout.repsPerRound)) && (
             <div className="grid grid-cols-2 gap-4">
               {workout.repsPerRound && (
                 <div className="space-y-1">
-                  <div className="uppercase text-xs font-bold tracking-wide">
-                    REPS PER ROUND
-                  </div>
+                  <div className="uppercase text-xs font-bold tracking-wide">REPS PER ROUND</div>
                   <div className="text-sm">{workout.repsPerRound}</div>
                 </div>
               )}
@@ -76,7 +69,7 @@ function WorkoutCard({workout}: WorkoutCardProps) {
             {workout.movements && workout.movements.length > 0 && (
               <div className="space-y-1">
                 <div className="flex flex-wrap gap-2">
-                  {workout.movements.slice(0, 2).map((movement) => (
+                  {workout.movements.slice(0, 2).map(movement => (
                     <Badge
                       key={movement}
                       variant="secondary"
@@ -109,9 +102,9 @@ function WorkoutCard({workout}: WorkoutCardProps) {
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }
 
-const MemoizedWorkoutCard = memo(WorkoutCard)
+const MemoizedWorkoutCard = memo(WorkoutCard);
 
-export {MemoizedWorkoutCard as WorkoutCard}
+export { MemoizedWorkoutCard as WorkoutCard };

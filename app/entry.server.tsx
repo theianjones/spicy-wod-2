@@ -4,13 +4,13 @@
  * For more information, see https://remix.run/file-conventions/entry.server
  */
 
-import type {AppLoadContext, EntryContext} from 'react-router'
-import {ServerRouter} from 'react-router'
-import {isbot} from 'isbot'
-import {renderToReadableStream} from 'react-dom/server'
+import { isbot } from 'isbot';
+import { renderToReadableStream } from 'react-dom/server';
+import type { AppLoadContext, EntryContext } from 'react-router';
+import { ServerRouter } from 'react-router';
 
 // Reject/cancel all pending promises after 5 seconds
-export const streamTimeout = 5000
+export const streamTimeout = 5000;
 
 export default async function handleRequest(
   request: Request,
@@ -20,9 +20,9 @@ export default async function handleRequest(
   // This is ignored so we can keep it in the template for visibility.  Feel
   // free to delete this parameter in your app if you're not using it!
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  loadContext: AppLoadContext,
+  loadContext: AppLoadContext
 ) {
-  const controller = new AbortController()
+  const controller = new AbortController();
 
   const body = await renderToReadableStream(
     <ServerRouter context={reactRouterContext} url={request.url} />,
@@ -31,20 +31,20 @@ export default async function handleRequest(
       onError(error: unknown) {
         if (!controller.signal.aborted) {
           // Log streaming rendering errors from inside the shell
-          console.error(error)
+          console.error(error);
         }
-        responseStatusCode = 500
+        responseStatusCode = 500;
       },
-    },
-  )
+    }
+  );
 
   if (isbot(request.headers.get('user-agent') || '')) {
-    await body.allReady
+    await body.allReady;
   }
 
-  responseHeaders.set('Content-Type', 'text/html')
+  responseHeaders.set('Content-Type', 'text/html');
   return new Response(body, {
     headers: responseHeaders,
     status: responseStatusCode,
-  })
+  });
 }

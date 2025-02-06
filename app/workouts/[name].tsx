@@ -1,44 +1,41 @@
-import {X, CalendarDays, Trophy} from 'lucide-react'
-import {useLoaderData} from 'react-router'
-import type {Route} from '../+types/root'
-import {Button} from '~/components/ui/button'
-import {getResultsForWodbyUserId} from '~/lib/results'
-import {getWorkoutWithMovementsByIdOrName} from '~/lib/workouts'
-import {formatTime} from '~/utils/format-time'
-import {WorkoutSchemeIcon} from '~/components/workouts/workout-scheme-icon'
-import {AllWodResult} from '~/schemas/models'
-import {requireAuth} from '~/middleware/auth'
+import { CalendarDays, Trophy, X } from 'lucide-react';
+import { useLoaderData } from 'react-router';
+
+import { formatTime } from '~/utils/format-time';
+import { Button } from '~/components/ui/button';
+import { WorkoutSchemeIcon } from '~/components/workouts/workout-scheme-icon';
+import { getResultsForWodbyUserId } from '~/lib/results';
+import { getWorkoutWithMovementsByIdOrName } from '~/lib/workouts';
+import { requireAuth } from '~/middleware/auth';
+import { AllWodResult } from '~/schemas/models';
+import type { Route } from '../+types/root';
 
 interface WorkoutPageProps {
   params: {
-    name: string
-  }
+    name: string;
+  };
 }
 
-export async function loader({request, context, params}: Route.LoaderArgs) {
-  const session = await requireAuth(request, context)
+export async function loader({ request, context, params }: Route.LoaderArgs) {
+  const session = await requireAuth(request, context);
 
   if (!params.name) {
-    throw new Response('Not Found', {status: 404})
+    throw new Response('Not Found', { status: 404 });
   }
 
-  const workout = await getWorkoutWithMovementsByIdOrName(params.name, context)
+  const workout = await getWorkoutWithMovementsByIdOrName(params.name, context);
 
   if (!workout) {
-    throw new Response('Not Found', {status: 404})
+    throw new Response('Not Found', { status: 404 });
   }
 
-  const results = await getResultsForWodbyUserId(
-    workout.id,
-    session.userId,
-    context,
-  )
+  const results = await getResultsForWodbyUserId(workout.id, session.userId, context);
 
-  return {workout, results}
+  return { workout, results };
 }
 
-export default function WorkoutPage({params}: WorkoutPageProps) {
-  let {workout, results} = useLoaderData<typeof loader>()
+export default function WorkoutPage({ params }: WorkoutPageProps) {
+  let { workout, results } = useLoaderData<typeof loader>();
 
   return (
     <div className="bg-white p-4 font-mono max-w-screen-xl mx-auto">
@@ -59,25 +56,18 @@ export default function WorkoutPage({params}: WorkoutPageProps) {
         </div>
         <div className="flex justify-between pt-8">
           <div className="flex flex-col ">
-            <div className="uppercase text-2xl mb-4 font-bold tracking-wide">
-              SCHEME
-            </div>
+            <div className="uppercase text-2xl mb-4 font-bold tracking-wide">SCHEME</div>
             <div className="flex items-center gap-2">
               <WorkoutSchemeIcon scheme={workout.scheme} className="size-6" />
-              <span className="uppercase text-xl font-bold tracking-wide">
-                {workout.scheme}
-              </span>
+              <span className="uppercase text-xl font-bold tracking-wide">{workout.scheme}</span>
             </div>
           </div>
 
           <div className="">
             <h2 className="text-2xl font-bold mb-4">MOVEMENTS</h2>
             <div className="flex flex-wrap gap-2">
-              {workout.movements.map((movement) => (
-                <div
-                  key={movement}
-                  className="border-2 border-black px-4 py-2 text-lg"
-                >
+              {workout.movements.map(movement => (
+                <div key={movement} className="border-2 border-black px-4 py-2 text-lg">
                   {movement}
                 </div>
               ))}
@@ -111,11 +101,7 @@ export default function WorkoutPage({params}: WorkoutPageProps) {
         <div className="bg-white border-4 border-black p-8 max-w-2xl w-full mx-4">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold">LOG NEW SCORE</h2>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-black hover:text-white"
-            >
+            <Button variant="ghost" size="icon" className="hover:bg-black hover:text-white">
               <X className="h-6 w-6" />
             </Button>
           </div>
@@ -142,12 +128,12 @@ export default function WorkoutPage({params}: WorkoutPageProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-function ResultsTable({results}: {results: AllWodResult[]}) {
+function ResultsTable({ results }: { results: AllWodResult[] }) {
   // Find the minimum score (best time)
-  const bestScore = Math.min(...results.map((r) => r?.score ?? Infinity))
+  const bestScore = Math.min(...results.map(r => r?.score ?? Infinity));
 
   return (
     <table className="w-full border-collapse">
@@ -161,14 +147,12 @@ function ResultsTable({results}: {results: AllWodResult[]}) {
         </tr>
       </thead>
       <tbody>
-        {results.map((result) => (
+        {results.map(result => (
           <tr
             key={result.id}
             className="border-b-2 border-black hover:bg-black hover:text-white transition-colors"
           >
-            <td className="p-4 text-lg">
-              {new Date(result?.date ?? 0).toLocaleDateString()}
-            </td>
+            <td className="p-4 text-lg">{new Date(result?.date ?? 0).toLocaleDateString()}</td>
             <td className="p-4 text-lg font-bold">
               <span className="relative flex items-center gap-2">
                 {formatTime(result?.score ?? 0)}
@@ -178,11 +162,7 @@ function ResultsTable({results}: {results: AllWodResult[]}) {
             <td className="p-4 text-lg">{result?.scale}</td>
             <td className="p-4 text-lg">{result?.notes}</td>
             <td className="p-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="hover:bg-white hover:text-black"
-              >
+              <Button variant="ghost" size="icon" className="hover:bg-white hover:text-black">
                 <X className="h-5 w-5" />
               </Button>
             </td>
@@ -190,5 +170,5 @@ function ResultsTable({results}: {results: AllWodResult[]}) {
         ))}
       </tbody>
     </table>
-  )
+  );
 }

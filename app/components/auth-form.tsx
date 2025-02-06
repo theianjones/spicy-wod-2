@@ -1,31 +1,27 @@
-import {SubmissionResult, useForm} from '@conform-to/react'
-import {parseWithZod} from '@conform-to/zod'
-import {Form} from 'react-router'
-import {
-  loginSchema,
-  signupSchema,
-  type LoginFormData,
-  type SignupFormData,
-} from '~/schemas/auth'
-import {Button} from '~/components/ui/button'
-import {ConformInput} from './ui/conform'
-import {FormLabel, FormError} from './ui/form'
+import { SubmissionResult, useForm } from '@conform-to/react';
+import { parseWithZod } from '@conform-to/zod';
+import { Form } from 'react-router';
+
+import { Button } from '~/components/ui/button';
+import { loginSchema, signupSchema, type LoginFormData, type SignupFormData } from '~/schemas/auth';
+import { ConformInput } from './ui/conform';
+import { FormError, FormLabel } from './ui/form';
 
 interface AuthFormProps {
-  mode: 'signup' | 'login'
-  lastResult?: SubmissionResult
+  mode: 'signup' | 'login';
+  lastResult?: SubmissionResult;
 }
 
-export function AuthForm({mode, lastResult}: AuthFormProps) {
+export function AuthForm({ mode, lastResult }: AuthFormProps) {
   const [form, fields] = useForm<LoginFormData | SignupFormData>({
     id: mode,
     shouldValidate: 'onSubmit',
     lastResult,
-    onValidate: ({formData}: {formData: FormData}) =>
+    onValidate: ({ formData }: { formData: FormData }) =>
       parseWithZod(formData, {
         schema: mode === 'signup' ? signupSchema : loginSchema,
       }),
-  })
+  });
 
   return (
     <div className="w-full max-w-md mx-auto p-4">
@@ -52,11 +48,7 @@ export function AuthForm({mode, lastResult}: AuthFormProps) {
 
           <div>
             <FormLabel htmlFor={fields.password.id}>Password</FormLabel>
-            <ConformInput
-              meta={fields.password}
-              type="password"
-              className="mt-1 block w-full"
-            />
+            <ConformInput meta={fields.password} type="password" className="mt-1 block w-full" />
           </div>
 
           <Button
@@ -72,12 +64,10 @@ export function AuthForm({mode, lastResult}: AuthFormProps) {
             href={mode === 'signup' ? '/login' : '/signup'}
             className="text-sm underline hover:text-gray-600"
           >
-            {mode === 'signup'
-              ? 'Already have an account? Log in'
-              : 'Need an account? Sign up'}
+            {mode === 'signup' ? 'Already have an account? Log in' : 'Need an account? Sign up'}
           </a>
         </div>
       </Form>
     </div>
-  )
+  );
 }

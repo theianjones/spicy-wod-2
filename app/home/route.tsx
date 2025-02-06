@@ -1,21 +1,19 @@
-import type {MetaFunction, LoaderFunctionArgs} from 'react-router'
-import type {Route} from '../+types/root'
-import {useLoaderData} from 'react-router'
-import {getAllMovements} from '~/lib/movements'
+import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
+import { useLoaderData } from 'react-router';
+
+import { getAllMovements } from '~/lib/movements';
+import type { Route } from '../+types/root';
 
 export const meta: MetaFunction = () => {
-  return [
-    {title: 'New Remix App'},
-    {name: 'description', content: 'Welcome to Remix!'},
-  ]
-}
+  return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }];
+};
 
-export async function loader({context}: Route.LoaderArgs) {
-  return getAllMovements({context})
+export async function loader({ context }: Route.LoaderArgs) {
+  return getAllMovements({ context });
 }
 
 export default function Index() {
-  const {movements} = useLoaderData<typeof loader>()
+  const { movements } = useLoaderData<typeof loader>();
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="flex flex-col items-center gap-16 p-16">
@@ -25,13 +23,13 @@ export default function Index() {
           </h1>
         </header>
         <div className="flex gap-4 flex-wrap">
-          {movements.map((movement) => (
+          {movements.map(movement => (
             <div key={movement.id}>{movement.name}</div>
           ))}
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 const resources = [
@@ -116,4 +114,4 @@ const resources = [
       </svg>
     ),
   },
-]
+];

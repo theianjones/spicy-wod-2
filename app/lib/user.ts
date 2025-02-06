@@ -4,5 +4,5 @@ export async function getUser() {
     email: 'zacjones93@gmail.com',
     name: 'Zac Jones',
     image: 'https://github.com/zacjones93.png',
-  }
+  };
 }

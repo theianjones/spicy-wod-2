@@ -1,14 +1,15 @@
-import {WorkoutCard} from './workout-card'
-import type {Movement, Workout} from '~/schemas/models'
-import {Link} from 'react-router'
-import {SearchAndFilters} from './search-and-filters'
+import { Link } from 'react-router';
+
+import type { Movement, Workout } from '~/schemas/models';
+import { SearchAndFilters } from './search-and-filters';
+import { WorkoutCard } from './workout-card';
 
 export default function WorkoutsGrid({
   workouts,
   movements,
 }: {
-  workouts: Workout[]
-  movements: Movement[]
+  workouts: Workout[];
+  movements: Movement[];
 }) {
   return (
     <div className="min-h-screen bg-white text-black">
@@ -27,11 +28,11 @@ export default function WorkoutsGrid({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {workouts.map((workout) => (
+          {workouts.map(workout => (
             <WorkoutCard key={workout.id} workout={workout} />
           ))}
         </div>
       </div>
     </div>
-  )
+  );
 }

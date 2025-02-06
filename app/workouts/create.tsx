@@ -1,51 +1,50 @@
-import {redirect, useActionData} from 'react-router'
-import {v4 as uuidv4} from 'uuid'
-import type {Route} from '../+types/root'
-import {WorkoutForm} from '~/components/workout-form'
-import {workoutSchema} from '~/schemas/models'
-import {getAllMovements} from '~/lib/movements'
-import {requireAuth} from '~/middleware/auth'
-import {parseWithZod} from '@conform-to/zod'
+import { parseWithZod } from '@conform-to/zod';
+import { redirect, useActionData } from 'react-router';
+import { v4 as uuidv4 } from 'uuid';
 
-export async function loader({request, context}: Route.LoaderArgs) {
-  await requireAuth(request, context)
-  return getAllMovements({context})
+import { WorkoutForm } from '~/components/workout-form';
+import { getAllMovements } from '~/lib/movements';
+import { requireAuth } from '~/middleware/auth';
+import { workoutSchema } from '~/schemas/models';
+import type { Route } from '../+types/root';
+
+export async function loader({ request, context }: Route.LoaderArgs) {
+  await requireAuth(request, context);
+  return getAllMovements({ context });
 }
 
-export async function action({request, context}: Route.ActionArgs) {
-  const session = await requireAuth(request, context)
-  const db = context.cloudflare.env.DB
-  const formData = await request.formData()
-  const workoutId = uuidv4()
+export async function action({ request, context }: Route.ActionArgs) {
+  const session = await requireAuth(request, context);
+  const db = context.cloudflare.env.DB;
+  const formData = await request.formData();
+  const workoutId = uuidv4();
 
   const submission = await parseWithZod(formData, {
-    schema: workoutSchema.omit({id: true}),
-  })
+    schema: workoutSchema.omit({ id: true }),
+  });
 
   if (submission.status !== 'success') {
-    return submission.reply()
+    return submission.reply();
   }
 
-  const data = submission.value
+  const data = submission.value;
 
   try {
     if (data.movements) {
       // verify all movements exist and get their IDs
       const movementQuery = `SELECT id FROM movements WHERE id IN (${data.movements
         .map(() => '?')
-        .join(',')})`
+        .join(',')})`;
 
-      const {results: existingMovements} = await db
+      const { results: existingMovements } = await db
         .prepare(movementQuery)
         .bind(...data.movements)
-        .all()
+        .all();
 
       if (existingMovements.length !== data.movements.length) {
-        const foundIds = existingMovements.map((m) => m.id)
-        const missingIds = data.movements.filter(
-          (id: string) => !foundIds.includes(id),
-        )
-        throw new Error(`Movements not found: ${missingIds.join(', ')}`)
+        const foundIds = existingMovements.map(m => m.id);
+        const missingIds = data.movements.filter((id: string) => !foundIds.includes(id));
+        throw new Error(`Movements not found: ${missingIds.join(', ')}`);
       }
     }
 
@@ -57,7 +56,7 @@ export async function action({request, context}: Route.ActionArgs) {
 				tiebreak_scheme, secondary_scheme,
 				created_at, user_id
 			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-		`
+		`;
 
     await db
       .prepare(workoutQuery)
@@ -71,9 +70,9 @@ export async function action({request, context}: Route.ActionArgs) {
         data.tiebreakScheme ?? null,
         data.secondaryScheme ?? null,
         new Date().toISOString(),
-        session.userId,
+        session.userId
       )
-      .run()
+      .run();
 
     if (data.movements) {
       // Then create workout movements one by one
@@ -81,31 +80,31 @@ export async function action({request, context}: Route.ActionArgs) {
         const movementLinkQuery = `
 					INSERT INTO workout_movements (id, workout_id, movement_id)
 					VALUES (?, ?, ?)
-				`
+				`;
 
-        const linkValues = [uuidv4(), workoutId, movementId]
+        const linkValues = [uuidv4(), workoutId, movementId];
 
         await db
           .prepare(movementLinkQuery)
           .bind(...linkValues)
-          .run()
+          .run();
       }
     }
 
-    return redirect('/workouts')
+    return redirect('/workouts');
   } catch (error) {
-    console.error('Error creating workout:', error)
-    return submission.reply({formErrors: ['Internal server error']})
+    console.error('Error creating workout:', error);
+    return submission.reply({ formErrors: ['Internal server error'] });
   }
 }
 
 export default function CreateWorkoutPage() {
-  const lastResult = useActionData<typeof action>()
+  const lastResult = useActionData<typeof action>();
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-xl">
         <WorkoutForm lastResult={lastResult} />
       </div>
     </div>
-  )
+  );
 }
