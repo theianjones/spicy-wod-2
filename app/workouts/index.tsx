@@ -1,5 +1,4 @@
-import { Link, useLoaderData } from 'react-router';
-
+import { useLoaderData } from 'react-router';
 import WorkoutGrid from '~/components/workouts/workout-grid';
 import { getAllMovements } from '~/lib/movements';
 import { getAllWorkoutsWithMovements, workoutFiltersSchema } from '~/lib/workouts';
@@ -7,7 +6,7 @@ import { requireAuth } from '~/middleware/auth';
 import type { Route } from '../+types/root';
 
 export async function loader({ request, context }: Route.LoaderArgs) {
-  const session = await requireAuth(request, context);
+  await requireAuth(request, context);
   const url = new URL(request.url);
 
   const filters = workoutFiltersSchema.parse({

@@ -1,5 +1,5 @@
 import { CalendarDays, Trophy, X } from 'lucide-react';
-import { useLoaderData } from 'react-router';
+import { Link, useLoaderData } from 'react-router';
 import { formatTime } from '~/utils/format-time';
 import { Button } from '~/components/ui/button';
 import { WorkoutSchemeIcon } from '~/components/workouts/workout-scheme-icon';
@@ -60,9 +60,13 @@ export default function WorkoutPage() {
             <h2 className="text-2xl font-bold mb-4">MOVEMENTS</h2>
             <div className="flex flex-wrap gap-2">
               {workout.movements.map(movement => (
-                <div key={movement} className="border-2 border-black px-4 py-2 text-lg">
+                <Link
+                  key={movement}
+                  to={`/movements/${movement}`}
+                  className="border-2 border-black px-4 py-2 text-lg hover:bg-gray-100"
+                >
                   {movement}
-                </div>
+                </Link>
               ))}
             </div>
           </div>

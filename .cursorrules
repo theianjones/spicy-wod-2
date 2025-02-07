@@ -7,48 +7,71 @@
 - whenever you see "@remix-run/node", use "@react-router/cloudflare" instead
 - whenever you see "@remix-run/react", use "react-router" instead
 - whenever you are installing a new package, use "pnpm add" instead of "npm install" and use "@latest"
+- when styling components, use a brutalist style. No rounded edges
+- always reference the <AllowedPackages> section when adding a new package
 </ProjectRules>
 
 <AllowedPackages>
   # Main Dependencies
-  "@react-router/cloudflare" # React Router integration for Cloudflare Workers, enabling server-side rendering and routing
-  "drizzle-orm" # Modern TypeScript ORM for SQL databases with type safety and minimal boilerplate
-  "isbot" # Utility to detect if a request is from a bot/crawler
-  "react" # Core React library for building user interfaces
-  "react-dom" # React package for DOM-specific methods and rendering
-  "react-router" # Declarative routing library for React applications
-  "@radix-ui/react-icons" # Beautiful hand-crafted icons from Radix UI
+  "@conform-to/react" # Form validation and handling for React
+  "@conform-to/zod" # Zod integration for Conform
+  "@radix-ui/react-dialog" # Dialog primitive component
+  "@radix-ui/react-icons" # Beautiful hand-crafted icons
+  "@radix-ui/react-label" # Label primitive component
+  "@radix-ui/react-popover" # Popover primitive component
+  "@radix-ui/react-scroll-area" # Scroll area primitive component
+  "@radix-ui/react-select" # Select primitive component
+  "@radix-ui/react-separator" # Separator primitive component
+  "@radix-ui/react-slot" # Slot primitive component
+  "@react-router/cloudflare" # React Router for Cloudflare Workers
+  "bcryptjs" # Password hashing library
   "class-variance-authority" # Create style variants with tailwind classes
   "clsx" # Utility for constructing className strings
-  "tailwind-merge" # Merge tailwind classes without conflicts
-  "lucide-react" # Beautiful and consistent icon set
-  "@hookform/resolvers" # Form validation resolvers
-  "react-hook-form" # Form state management
+  "cmdk" # Command menu component
+  "drizzle-orm" # Modern TypeScript ORM
+  "isbot" # Utility to detect bots
+  "lucide-react" # Beautiful icon set
+  "react" # Core React library
+  "react-dom" # React DOM renderer
+  "react-router" # React routing library
+  "tailwind-merge" # Merge tailwind classes
+  "tailwindcss-animate" # Animation utilities for Tailwind
+  "use-debounce" # Debounce hook utility
+  "uuid" # UUID generation
   "zod" # Schema validation
 
-# Dev Dependencies
-
-"@cloudflare/workers-types" # TypeScript types for Cloudflare Workers
-"@react-router/dev" # Development tools for React Router
-"@types/react" # TypeScript type definitions for React
-"@types/react-dom" # TypeScript type definitions for React DOM
-"@typescript-eslint/eslint-plugin" # ESLint plugin for TypeScript-specific linting rules
-"@typescript-eslint/parser" # Allows ESLint to parse TypeScript code
-"autoprefixer" # PostCSS plugin to parse CSS and add vendor prefixes automatically
-"drizzle-kit" # CLI and development tools for Drizzle ORM
-"eslint" # Static code analysis tool for identifying problematic patterns
-"eslint-import-resolver-typescript" # ESLint plugin for resolving TypeScript imports
-"eslint-plugin-import" # ESLint plugin for linting import/export syntax
-"eslint-plugin-jsx-a11y" # ESLint plugin for accessibility rules on JSX elements
-"eslint-plugin-react" # React specific linting rules for ESLint
-"eslint-plugin-react-hooks" # ESLint rules for React Hooks
-"postcss" # Tool for transforming CSS with JavaScript plugins
-"tailwindcss" # Utility-first CSS framework for rapid UI development
-"typescript" # Typed superset of JavaScript that compiles to plain JavaScript
-"vite" # Modern frontend build tool and development server
-"vite-tsconfig-paths" # Vite plugin for TypeScript path mapping support
-"wrangler" # Cloudflare Workers CLI tool for development and deployment
-"shadcn-ui" # CLI tool for adding shadcn/ui components
+  # Dev Dependencies
+  "@cloudflare/workers-types" # Cloudflare Workers types
+  "@eslint/eslintrc" # ESLint configuration
+  "@eslint/js" # ESLint JavaScript support
+  "@ianvs/prettier-plugin-sort-imports" # Import sorting for Prettier
+  "@react-router/dev" # React Router dev tools
+  "@types/react" # React TypeScript types
+  "@types/react-dom" # React DOM TypeScript types
+  "@typescript-eslint/eslint-plugin" # TypeScript ESLint plugin
+  "@typescript-eslint/parser" # TypeScript ESLint parser
+  "autoprefixer" # CSS autoprefixer
+  "better-sqlite3" # SQLite library only used for drizzle studio, do not use this anywhere else
+  "dotenv" # Environment variable management
+  "drizzle-kit" # Drizzle ORM toolkit
+  "eslint" # Linting utility
+  "eslint-config-prettier" # Prettier ESLint config
+  "eslint-import-resolver-typescript" # TypeScript import resolver
+  "eslint-plugin-import" # ESLint import rules
+  "eslint-plugin-jsx-a11y" # Accessibility linting
+  "eslint-plugin-react" # React linting rules
+  "eslint-plugin-react-hooks" # React hooks linting
+  "husky" # Git hooks
+  "lint-staged" # Staged files linting
+  "postcss" # CSS post-processor
+  "prettier" # Code formatter
+  "prettier-plugin-tailwindcss" # Tailwind CSS Prettier plugin
+  "shadcn-ui" # UI component library
+  "tailwindcss" # Utility-first CSS framework
+  "typescript" # TypeScript language
+  "vite" # Build tool and dev server
+  "vite-tsconfig-paths" # TypeScript path resolution
+  "wrangler" # Cloudflare Workers CLI
 </AllowedPackages>
 
 <Database>

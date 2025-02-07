@@ -1,7 +1,6 @@
 import { memo } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router';
-
 import { Badge } from '~/components/ui/badge';
 import {
   Card,
@@ -70,13 +69,13 @@ function WorkoutCard({ workout }: WorkoutCardProps) {
               <div className="space-y-1">
                 <div className="flex flex-wrap gap-2">
                   {workout.movements.slice(0, 2).map(movement => (
-                    <Badge
+                    <Link
                       key={movement}
-                      variant="secondary"
-                      className="border border-black text-black bg-white text-xs rounded-none"
+                      to={`/movements/${movement}`}
+                      className="border border-black text-black bg-white text-xs rounded-none px-2 py-1 hover:bg-gray-100"
                     >
                       {movement}
-                    </Badge>
+                    </Link>
                   ))}
                   {workout.movements.length > 2 && (
                     <Badge
@@ -91,7 +90,7 @@ function WorkoutCard({ workout }: WorkoutCardProps) {
             )}
           </div>
           <Link
-            to={`/workouts/${workout.name}`}
+            to={`/workouts/${workout.userId ? workout.id : workout.name}`}
             className="border border-black text-black text-xs px-1 py-0.5 rounded-none flex items-center gap-1 font-semibold"
           >
             Details
