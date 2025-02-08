@@ -5,7 +5,7 @@ import { WorkoutForm } from '~/components/workout-form';
 import { getAllMovements } from '~/lib/movements';
 import { requireAuth } from '~/middleware/auth';
 import { workoutSchema } from '~/schemas/models';
-import type { Route } from '../+types/root';
+import type { Route } from '../workouts/+types/create';
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   await requireAuth(request, context);

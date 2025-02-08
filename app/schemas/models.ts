@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // Base schemas for common fields
 const baseIdSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().uuid().optional(),
 });
 
 // Users schema
@@ -48,9 +48,9 @@ export const workoutSchema = baseIdSchema.extend({
     .transform(date => new Date(date))
     .optional()
     .nullable(),
-  repsPerRound: z.coerce.number().int().optional().nullable(),
-  roundsToScore: z.coerce.number().int().optional().nullable(),
-  userId: z.string().uuid().optional().nullable(),
+  repsPerRound: z.coerce.number().int().optional(),
+  roundsToScore: z.coerce.number().int().optional(),
+  userId: z.string().uuid().optional(),
   sugarId: z.string().optional().nullable(),
   tiebreakScheme: z.enum(['time', 'reps']).nullish(),
   secondaryScheme: z

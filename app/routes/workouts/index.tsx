@@ -3,7 +3,7 @@ import WorkoutGrid from '~/components/workouts/workout-grid';
 import { getAllMovements } from '~/lib/movements';
 import { getAllWorkoutsWithMovements, workoutFiltersSchema } from '~/lib/workouts';
 import { requireAuth } from '~/middleware/auth';
-import type { Route } from '../+types/root';
+import type { Route } from '../workouts/+types/index';
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   await requireAuth(request, context);
