@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { WorkoutCard } from '~/components/workouts/workout-card';
 import { getMovementByIdWithWorkouts } from '~/lib/movements';
 import { requireAuth } from '~/middleware/auth';
-import type { Route } from '../../+types/root';
+import type { Route } from '../movements/+types/[name]';
 
 const loaderParamsSchema = z.object({
   name: z.string(),

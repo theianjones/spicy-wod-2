@@ -1,7 +1,6 @@
 import { parseWithZod } from '@conform-to/zod';
 import { redirect, useActionData } from 'react-router';
 import { z } from 'zod';
-
 import { verifyPassword } from '~/utils/auth';
 import { createSession, createSessionCookie } from '~/utils/session';
 import { AuthForm } from '~/components/auth-form';
@@ -47,7 +46,7 @@ export async function action({ request, context }: Route.ActionArgs) {
     userValidation.data.hashed_password
   );
 
-  if (!isValid) {
+  if (!isValid || !userValidation.data.id) {
     return submission.reply({
       formErrors: ['Invalid email or password'],
     });

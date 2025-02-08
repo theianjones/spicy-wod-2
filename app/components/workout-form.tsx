@@ -1,10 +1,9 @@
 import { useForm, type SubmissionResult } from '@conform-to/react';
 import { parseWithZod } from '@conform-to/zod';
 import { useLoaderData } from 'react-router';
-
 import { Button } from '~/components/ui/button';
+import { loader } from '~/routes/workouts/create';
 import { workoutSchema, type Workout } from '~/schemas/models';
-import { loader } from '~/workouts/create';
 import { ConformInput, ConformMultiSelect, ConformSelect, ConformTextarea } from './ui/conform';
 import { FormError, FormLabel } from './ui/form';
 
@@ -90,7 +89,12 @@ export function WorkoutForm({ lastResult }: { lastResult?: SubmissionResult }) {
           <FormLabel htmlFor={fields.movements.id}>Movements</FormLabel>
           <ConformMultiSelect
             meta={fields.movements}
-            options={movementOptions}
+            options={
+              movementOptions.filter(option => option.value !== undefined) as {
+                value: string;
+                label: string;
+              }[]
+            }
             placeholder="Select movements..."
             className="mt-1"
           />
