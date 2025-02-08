@@ -1,15 +1,17 @@
 import { and, eq, inArray, like, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import { z } from 'zod';
-
-import { workoutSchema } from '~/schemas/models';
+import { workoutSchema, workoutSchemes } from '~/schemas/models';
 import * as schema from '../../db/schema';
 import type { Route } from '../+types/root';
 
 export const workoutFiltersSchema = z
   .object({
     name: z.string().optional().nullable(),
-    scheme: z.string().optional().nullable(),
+    scheme: z
+      .enum(['all', ...workoutSchemes])
+      .optional()
+      .nullable(),
     movements: z.array(z.string()).optional().nullable(),
   })
   .default({});
@@ -50,7 +52,7 @@ export async function getAllWorkoutsWithMovements({
   }
 
   if (filters.scheme && filters.scheme !== 'all') {
-    conditions.push(eq(schema.workouts.scheme, filters.scheme as any));
+    conditions.push(eq(schema.workouts.scheme, filters.scheme));
   }
 
   if (filters.movements && filters.movements.length > 0) {

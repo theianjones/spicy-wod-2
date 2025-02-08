@@ -1,7 +1,6 @@
 import { parseWithZod } from '@conform-to/zod';
 import { redirect, useActionData } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
-
 import { WorkoutForm } from '~/components/workout-form';
 import { getAllMovements } from '~/lib/movements';
 import { requireAuth } from '~/middleware/auth';
@@ -55,7 +54,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 				reps_per_round, rounds_to_score,
 				tiebreak_scheme, secondary_scheme,
 				created_at, user_id
-			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)
 		`;
 
     await db
@@ -69,7 +68,6 @@ export async function action({ request, context }: Route.ActionArgs) {
         data.roundsToScore ?? null,
         data.tiebreakScheme ?? null,
         data.secondaryScheme ?? null,
-        new Date().toISOString(),
         session.userId
       )
       .run();

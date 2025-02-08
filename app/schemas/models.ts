@@ -24,28 +24,34 @@ export const movementSchema = baseIdSchema.extend({
   type: z.enum(['strength', 'gymnastic', 'monostructural']),
 });
 
+export const workoutSchemes = [
+  'time',
+  'time-with-cap',
+  'pass-fail',
+  'rounds-reps',
+  'reps',
+  'emom',
+  'load',
+  'calories',
+  'meters',
+  'feet',
+  'points',
+] as const;
+
 // Workouts schema
 export const workoutSchema = baseIdSchema.extend({
   name: z.string(),
   description: z.string(),
-  scheme: z.enum([
-    'time',
-    'time-with-cap',
-    'pass-fail',
-    'rounds-reps',
-    'reps',
-    'emom',
-    'load',
-    'calories',
-    'meters',
-    'feet',
-    'points',
-  ]),
-  createdAt: z.number().int().optional(),
-  repsPerRound: z.coerce.number().int().optional(),
-  roundsToScore: z.coerce.number().int().optional(),
-  userId: z.string().uuid().optional(),
-  sugarId: z.string().optional(),
+  scheme: z.enum(workoutSchemes),
+  createdAt: z
+    .date()
+    .transform(date => new Date(date))
+    .optional()
+    .nullable(),
+  repsPerRound: z.coerce.number().int().optional().nullable(),
+  roundsToScore: z.coerce.number().int().optional().nullable(),
+  userId: z.string().uuid().optional().nullable(),
+  sugarId: z.string().optional().nullable(),
   tiebreakScheme: z.enum(['time', 'reps']).nullish(),
   secondaryScheme: z
     .enum([

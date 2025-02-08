@@ -1,4 +1,4 @@
-import { index, layout, route, type RouteConfig } from '@react-router/dev/routes';
+import { index, route, type RouteConfig } from '@react-router/dev/routes';
 
 export default [
   index('home/route.tsx'),
@@ -8,4 +8,5 @@ export default [
   route('/workouts', 'workouts/index.tsx'),
   route('/workouts/create', 'workouts/create.tsx'),
   route('/workouts/:name', 'workouts/[name].tsx'),
+  route('/movements/:name', 'routes/movements/[name].tsx'),
 ] satisfies RouteConfig;
