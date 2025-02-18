@@ -90,7 +90,7 @@ function WorkoutCard({ workout }: WorkoutCardProps) {
             )}
           </div>
           <Link
-            to={`/workouts/${workout.userId ? workout.id : workout.name}`}
+            to={`/workouts/${workout.userId ? workout.id : workout.name.toLowerCase()}`}
             className="border border-black text-black text-xs px-1 py-0.5 rounded-none flex items-center gap-1 font-semibold"
           >
             Details
