@@ -117,6 +117,8 @@ export async function getWorkoutWithMovementsByIdOrName(
   return workoutSchema
     .transform(data => ({
       ...data,
+      repsPerRound: Number(result?.reps_per_round),
+      roundsToScore: Number(result?.rounds_to_score),
       movements: result?.movement_names
         ? (result.movement_names as string).split(',').map(movement => movement.trim())
         : [],

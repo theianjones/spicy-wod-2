@@ -41,14 +41,14 @@ export function MinutesSecondsInput({
   };
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-4 w-full">
       <div>
         <Label htmlFor={`${id}-minutes`}>Minutes</Label>
-        <Input type="number" id={`${id}-minutes`} value={minutes} onChange={handleMinutesChange} />
+        <Input type="number" min={0} id={`${id}-minutes`} value={minutes} onChange={handleMinutesChange} className='w-fit' />
       </div>
-      <div>
+      <div className=''>
         <Label htmlFor={`${id}-seconds`}>Seconds</Label>
-        <Input type="number" id={`${id}-seconds`} value={seconds} onChange={handleSecondsChange} />
+        <Input type="number" min={0}  max={59} id={`${id}-seconds`} value={seconds} onChange={handleSecondsChange} className='w-full' />
       </div>
     </div>
   );

@@ -82,9 +82,9 @@ export const workoutMovementSchema = baseIdSchema.extend({
 // Base Result schema
 export const baseResultSchema = baseIdSchema.extend({
   userId: z.string(), // TODO: change to uuid, I'm spoofing id to 1 for now
-  date: z.number().int(),
+  date: z.date({ coerce: true }),
   type: z.string(),
-  notes: z.string().optional(),
+  notes: z.string().nullish(),
 });
 
 // WOD Results schema

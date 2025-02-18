@@ -197,7 +197,7 @@ export function ConformCombobox<T extends string | undefined>({
   );
 }
 
-export function ConformMinutesSecondsInput<T extends number[] | undefined>({
+export function ConformMinutesSecondsInput<T extends string | undefined>({
   meta,
   label,
   description,
@@ -205,18 +205,19 @@ export function ConformMinutesSecondsInput<T extends number[] | undefined>({
   numberOfRounds,
   ...props
 }: FormFieldProps<T> & { numberOfRounds: number }) {
-  const [scores, setScores] = useState<{ [key: number]: number }>({});
-  console.log(scores);
+  const initialValues = meta.initialValue ? JSON.parse(meta.initialValue as string) : {};
+  const [scores, setScores] = useState<{ [key: number]: number }>(initialValues);
+
   return (
     <FormItem className={className} {...props}>
-      <input type="hidden" name={meta.name} value={JSON.stringify(Object.values(scores))} />
+      <input type="hidden" name={meta.name} value={JSON.stringify(scores)} />
       {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
       <FormControl>
-        <div className="flex gap-4">
-          {Array.from({ length: numberOfRounds }).map((_, index) => (
+        <div className="flex flex-col gap-4">
+          {Array.from({ length: !!numberOfRounds ? numberOfRounds : 1 }).map((_, index) => (
             <MinutesSecondsInput
               key={`${meta.id}-${index}`}
-              defaultValue={Number(meta.initialValue)}
+              defaultValue={initialValues?.[index] ?? undefined}
               onChange={({ minutes, seconds }) => {
                 console.log(minutes, seconds);
                 setScores(prev => ({ ...prev, [index]: (minutes ?? 0) * 60 + (seconds ?? 0) }));
@@ -240,11 +241,17 @@ export function ConformToggleGroup<T extends string | undefined>({
   size,
   ...props
 }: FormFieldProps<T> & { children: React.ReactNode; size?: 'default' | 'sm' | 'lg' }) {
+
+  console.log({value: meta.value})
   return (
     <FormItem className={cn('flex flex-col gap-2', className)} {...props}>
       {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
       <FormControl>
-        <ToggleGroup type="single" size={size} className="w-fit">
+        <ToggleGroup
+          type="single"
+          size={size}
+          className="w-fit"
+        >
           {children}
         </ToggleGroup>
       </FormControl>

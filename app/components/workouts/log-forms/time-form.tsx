@@ -1,31 +1,47 @@
-import { useForm } from '@conform-to/react';
+import { useForm, type SubmissionResult } from '@conform-to/react';
 import { parseWithZod } from '@conform-to/zod';
 import { z } from 'zod';
 import { Button } from '~/components/ui/button';
-import { ConformMinutesSecondsInput, ConformToggleGroup } from '~/components/ui/conform';
-import { ToggleGroupItem } from '~/components/ui/toggle-group';
+import { ConformMinutesSecondsInput, ConformSelect, ConformTextarea } from '~/components/ui/conform';
+import { FormLabel, FormMessage } from '~/components/ui/form';
 import { Workout } from '~/schemas/models';
 
-export const resultsSchema = z.object({
-  scores: z.array(z.number()),
-  scale: z.enum(['rx', 'scaled', 'rx+']),
-  workoutId: z.string(),
-});
+export const resultsSchema = (roundsToScore: number) =>
+  z.object({
+    scores: z.string().refine(
+      val => {
+        const scores = JSON.parse(val);
+        return Object.values(scores).length === roundsToScore;
+      },
+      {
+        message: 'You must log a score for each round',
+      }
+    ),
+    scale: z.enum(['rx', 'scaled', 'rx+']),
+    workoutId: z.string(),
+    notes: z.string().optional(),
+  });
 
 interface TimeLogFormProps {
   workout: Workout;
+  lastResult?: SubmissionResult;
 }
 
-export function TimeLogForm({ workout }: TimeLogFormProps) {
-  const [, { scores, scale, workoutId }] = useForm({
+export function TimeLogForm({ workout, lastResult }: TimeLogFormProps) {
+  console.log({ workout });
+  const initialValue = lastResult?.initialValue;
+  const transformedInitialScore = initialValue?.scores;
+  const [form, { scores, scale, workoutId, notes }] = useForm({
     id: 'time-log-form',
-    onValidate({ formData }) {
-      return parseWithZod(formData, { schema: resultsSchema });
+    lastResult,
+    shouldValidate: 'onBlur',
+    defaultValue: {
+      notes: null
     },
-    defaultValue: {},
-    onSubmit(event) {
-      const formData = new FormData(event.currentTarget);
-      console.log(formData.get('scores'));
+    onValidate({ formData }) {
+      return parseWithZod(formData, {
+        schema: resultsSchema(workout.roundsToScore ?? 1),
+      });
     },
   });
 
@@ -36,11 +52,29 @@ export function TimeLogForm({ workout }: TimeLogFormProps) {
       <div className="flex gap-4">
         <ConformMinutesSecondsInput meta={scores} numberOfRounds={workout.roundsToScore ?? 1} />
       </div>
-      <ConformToggleGroup meta={scale} label="Scale" size="lg">
-        <ToggleGroupItem value="scaled">Scaled</ToggleGroupItem>
-        <ToggleGroupItem value="rx">RX</ToggleGroupItem>
-        <ToggleGroupItem value="rx+">RX+</ToggleGroupItem>
-      </ConformToggleGroup>
+      <div>
+        <FormLabel htmlFor={scale.id} className="text-sm font-bold uppercase block">
+          Scale
+        </FormLabel>
+        <ConformSelect
+          meta={scale}
+          options={[
+            { value: 'scaled', label: 'Scaled' },
+            { value: 'rx', label: 'RX' },
+            { value: 'rx+', label: 'RX+' },
+          ]}
+          placeholder="Select a scoring scheme"
+          className="mt-1 block w-full"
+        />
+        <FormMessage>{scale.errors}</FormMessage>
+      </div>
+      <div className="mt-4">
+          <FormLabel htmlFor={notes.id} className="text-sm font-bold uppercase block">
+            Notes
+          </FormLabel>
+          <ConformTextarea meta={notes} className="mt-1 block w-full" />
+          <FormMessage>{notes.errors}</FormMessage>
+        </div>
       <Button
         type="submit"
         className="mt-4 bg-black text-white px-4 py-2 hover:bg-white hover:text-black border-2 border-black transition-colors"
