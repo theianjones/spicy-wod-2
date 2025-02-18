@@ -19,7 +19,7 @@ const ToggleGroup = React.forwardRef<
   <ToggleGroupPrimitive.Root
     ref={ref}
     className={cn(
-      'inline-flex border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-[2px] transition-transform duration-100 bg-white',
+      'inline-flex border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] duration-100 bg-white',
       className
     )}
     {...props}
@@ -36,6 +36,8 @@ const ToggleGroupItem = React.forwardRef<
     VariantProps<typeof toggleVariants>
 >(({ className, children, ...props }, ref) => {
   const context = React.useContext(ToggleGroupContext);
+
+  console.log({context})
 
   return (
     <ToggleGroupPrimitive.Item
