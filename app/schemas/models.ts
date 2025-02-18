@@ -95,14 +95,15 @@ export const wodResultSchema = baseIdSchema.extend({
 
 // WOD Sets schema
 export const wodSetSchema = baseIdSchema.extend({
-  resultId: z.string().uuid(),
   score: z.number().int().optional(),
   setNumber: z.number().int(),
 });
 
 export const allWodResultSchema = baseResultSchema
   .merge(wodResultSchema)
-  .merge(wodSetSchema.omit({ resultId: true }));
+  .extend({
+    sets: z.array(wodSetSchema.omit({ id: true }))
+  });
 
 // Strength Results schema
 export const strengthResultSchema = baseIdSchema.extend({
