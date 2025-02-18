@@ -64,3 +64,13 @@ export async function getResultsForWodbyUserId(
 
   return transformedResults.map(result => allWodResultSchema.parse(result));
 }
+
+export async function deleteWodResult(resultId: string, context: Route.ActionArgs['context']) {
+  const db = context.cloudflare.env.DB;
+
+  await db.prepare(`DELETE FROM wod_sets WHERE result_id = ?`).bind(resultId).run();
+
+  await db.prepare(`DELETE FROM wod_results WHERE id = ?`).bind(resultId).run();
+
+  await db.prepare(`DELETE FROM results WHERE id = ?`).bind(resultId).run();
+}

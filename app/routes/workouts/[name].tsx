@@ -1,13 +1,30 @@
 import { CalendarDays, Trophy, X } from 'lucide-react';
-import { Link, Outlet, useLoaderData } from 'react-router';
+import { Form, Link, Outlet, redirect, useLoaderData } from 'react-router';
 import { Button } from '~/components/ui/button';
 import { ScoreDisplay } from '~/components/workouts/score-display';
 import { WorkoutSchemeIcon } from '~/components/workouts/workout-scheme-icon';
-import { getResultsForWodbyUserId } from '~/lib/results';
+import { deleteWodResult, getResultsForWodbyUserId } from '~/lib/results';
 import { getWorkoutWithMovementsByIdOrName } from '~/lib/workouts';
 import { requireAuth } from '~/middleware/auth';
 import { AllWodResult, type Workout } from '~/schemas/models';
 import type { Route } from '../workouts/+types/[name]';
+
+
+export async function action({ request, context, params }: Route.ActionArgs) {
+  const session = await requireAuth(request, context);
+  const formData = await request.formData();
+  const resultId = formData.get('resultId') as string;
+
+  if (!resultId) {
+    throw new Response('Result ID is required', { status: 400 });
+  }
+
+  // Delete the result
+  await deleteWodResult(resultId, context);
+
+  // Redirect back to the workout page
+  return redirect(`/workouts/${params.name}`);
+}
 
 export async function loader({ request, context, params }: Route.LoaderArgs) {
   const session = await requireAuth(request, context);
@@ -109,9 +126,6 @@ function ResultsTable({
   results: AllWodResult[];
   workout: Pick<Workout, 'scheme'>;
 }) {
-  // Find the minimum score (best time)
-  const bestScore = Math.min(...results.map(r => r?.score ?? Infinity));
-
   return (
     <table className="w-full border-collapse">
       <thead>
@@ -132,16 +146,37 @@ function ResultsTable({
             <td className="p-4 text-lg">{new Date(result?.date ?? 0).toLocaleDateString()}</td>
             <td className="p-4 text-lg font-bold">
               <span className="relative flex items-center gap-2">
-                <ScoreDisplay workout={workout} score={result?.score ?? 0} />
-                {result?.score === bestScore && <Trophy className="h-5 w-5" />}
+                {result.sets.map(set => (
+                  <div key={set.setNumber} className="flex items-center gap-1">
+                    {result.sets.length > 1 && (
+                      <span className="text-sm text-gray-500">({set.setNumber})</span>
+                    )}
+                    <ScoreDisplay workout={workout} score={set.score ?? 0} />
+                  </div>
+                ))}
               </span>
             </td>
             <td className="p-4 text-lg">{result?.scale}</td>
             <td className="p-4 text-lg">{result?.notes}</td>
             <td className="p-4">
-              <Button variant="ghost" size="icon" className="hover:bg-white hover:text-black">
-                <X className="h-5 w-5" />
-              </Button>
+              <Form
+                method="post"
+                onSubmit={event => {
+                  if (!confirm('Are you sure you want to delete this result?')) {
+                    event.preventDefault();
+                  }
+                }}
+              >
+                <input type="hidden" name="resultId" value={result.id} />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="hover:bg-white hover:text-black"
+                  type="submit"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </Form>
             </td>
           </tr>
         ))}
