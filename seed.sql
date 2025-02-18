@@ -75,23 +75,23 @@ INSERT INTO movements (id, name, type) VALUES
 ('00000000-0000-0000-0000-000000000061', 'echo bike', 'monostructural');
 
 -- Seed workouts table
-INSERT INTO workouts (id, name, description, scheme, created_at) VALUES 
-('10000000-0000-0000-0000-000000000001', 'Fran', '21-15-9 reps of thrusters (95/65 lbs) and pull-ups', 'time', CURRENT_TIMESTAMP),
-('10000000-0000-0000-0000-000000000002', 'Angie', '100 pull-ups 100 push-ups 100 sit-ups 100 squats', 'time', CURRENT_TIMESTAMP),
-('10000000-0000-0000-0000-000000000003', 'Barbara', '5 rounds of: 20 pull-ups 30 push-ups 40 sit-ups 50 squats; Rest 3 minutes between rounds', 'time', CURRENT_TIMESTAMP),
-('10000000-0000-0000-0000-000000000004', 'Chelsea', 'Every minute on the minute for 30 minutes: 5 pull-ups 10 push-ups 15 squats', 'pass-fail', CURRENT_TIMESTAMP),
-('10000000-0000-0000-0000-000000000005', 'Cindy', 'As many rounds as possible in 20 minutes: 5 pull-ups 10 push-ups 15 squats', 'rounds-reps', CURRENT_TIMESTAMP),
-('10000000-0000-0000-0000-000000000006', 'Diane', '21-15-9 reps of deadlifts (225/155 lbs) and handstand push-ups', 'time', CURRENT_TIMESTAMP),
-('10000000-0000-0000-0000-000000000007', 'Elizabeth', '21-15-9 reps of cleans (135/95 lbs) and ring dips', 'time', CURRENT_TIMESTAMP),
-('10000000-0000-0000-0000-000000000008', 'Grace', '30 clean and jerks (135/95 lbs)', 'time', CURRENT_TIMESTAMP),
-('10000000-0000-0000-0000-000000000009', 'Helen', '3 rounds for time: 400m run 21 kettlebell swings (53/35 lbs) 12 pull-ups', 'time', CURRENT_TIMESTAMP),
-('10000000-0000-0000-0000-000000000010', 'Isabel', '30 snatches (135/95 lbs)', 'time', CURRENT_TIMESTAMP),
-('10000000-0000-0000-0000-000000000011', 'Jackie', '1000m row 50 thrusters (45/35 lbs) 30 pull-ups', 'time', CURRENT_TIMESTAMP),
-('10000000-0000-0000-0000-000000000012', 'Karen', '150 wall-ball shots (20/14 lbs)', 'time', CURRENT_TIMESTAMP),
-('10000000-0000-0000-0000-000000000013', 'Linda', '10-9-8-7-6-5-4-3-2-1 reps for time: deadlift (1.5 bodyweight) bench press (bodyweight) clean (0.75 bodyweight)', 'time', CURRENT_TIMESTAMP),
-('10000000-0000-0000-0000-000000000014', 'Mary', 'As many rounds as possible in 20 minutes: 5 handstand push-ups 10 one-legged squats 15 pull-ups', 'rounds-reps', CURRENT_TIMESTAMP),
-('10000000-0000-0000-0000-000000000015', 'Nancy', '5 rounds for time: 400m run 15 overhead squats (95/65 lbs)', 'time', CURRENT_TIMESTAMP),
-('10000000-0000-0000-0000-000000000016', 'Annie', '50-40-30-20-10 reps for time: double-unders sit-ups', 'time', CURRENT_TIMESTAMP);
+INSERT INTO workouts (id, name, description, scheme, created_at, rounds_to_score) VALUES 
+('10000000-0000-0000-0000-000000000001', 'Fran', '21-15-9 reps of thrusters (95/65 lbs) and pull-ups', 'time', CURRENT_TIMESTAMP, 1),
+('10000000-0000-0000-0000-000000000002', 'Angie', '100 pull-ups 100 push-ups 100 sit-ups 100 squats', 'time', CURRENT_TIMESTAMP, 1),
+('10000000-0000-0000-0000-000000000003', 'Barbara', '5 rounds of: 20 pull-ups 30 push-ups 40 sit-ups 50 squats; Rest 3 minutes between rounds', 'time', CURRENT_TIMESTAMP, 1),
+('10000000-0000-0000-0000-000000000004', 'Chelsea', 'Every minute on the minute for 30 minutes: 5 pull-ups 10 push-ups 15 squats', 'pass-fail', CURRENT_TIMESTAMP, 1),
+('10000000-0000-0000-0000-000000000005', 'Cindy', 'As many rounds as possible in 20 minutes: 5 pull-ups 10 push-ups 15 squats', 'rounds-reps', CURRENT_TIMESTAMP, 1),
+('10000000-0000-0000-0000-000000000006', 'Diane', '21-15-9 reps of deadlifts (225/155 lbs) and handstand push-ups', 'time', CURRENT_TIMESTAMP, 1),
+('10000000-0000-0000-0000-000000000007', 'Elizabeth', '21-15-9 reps of cleans (135/95 lbs) and ring dips', 'time', CURRENT_TIMESTAMP, 1),
+('10000000-0000-0000-0000-000000000008', 'Grace', '30 clean and jerks (135/95 lbs)', 'time', CURRENT_TIMESTAMP, 1),
+('10000000-0000-0000-0000-000000000009', 'Helen', '3 rounds for time: 400m run 21 kettlebell swings (53/35 lbs) 12 pull-ups', 'time', CURRENT_TIMESTAMP, 1),
+('10000000-0000-0000-0000-000000000010', 'Isabel', '30 snatches (135/95 lbs)', 'time', CURRENT_TIMESTAMP, 1),
+('10000000-0000-0000-0000-000000000011', 'Jackie', '1000m row 50 thrusters (45/35 lbs) 30 pull-ups', 'time', CURRENT_TIMESTAMP, 1),
+('10000000-0000-0000-0000-000000000012', 'Karen', '150 wall-ball shots (20/14 lbs)', 'time', CURRENT_TIMESTAMP, 1),
+('10000000-0000-0000-0000-000000000013', 'Linda', '10-9-8-7-6-5-4-3-2-1 reps for time: deadlift (1.5 bodyweight) bench press (bodyweight) clean (0.75 bodyweight)', 'time', CURRENT_TIMESTAMP, 1),
+('10000000-0000-0000-0000-000000000014', 'Mary', 'As many rounds as possible in 20 minutes: 5 handstand push-ups 10 one-legged squats 15 pull-ups', 'rounds-reps', CURRENT_TIMESTAMP, 1),
+('10000000-0000-0000-0000-000000000015', 'Nancy', '5 rounds for time: 400m run 15 overhead squats (95/65 lbs)', 'time', CURRENT_TIMESTAMP, 1),
+('10000000-0000-0000-0000-000000000016', 'Annie', '50-40-30-20-10 reps for time: double-unders sit-ups', 'time', CURRENT_TIMESTAMP, 1);
 
 -- Seed workout_movements junction table
 INSERT INTO workout_movements (id, workout_id, movement_id) VALUES 
