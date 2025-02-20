@@ -8,6 +8,7 @@ import { getWorkoutWithMovementsByIdOrName } from '~/lib/workouts';
 import { requireAuth } from '~/middleware/auth';
 import { AllWodResult, type Workout } from '~/schemas/models';
 import type { Route } from '../workouts/+types/[name]';
+import { formatTime } from '~/utils/format-time';
 
 
 export async function action({ request, context, params }: Route.ActionArgs) {
@@ -53,7 +54,12 @@ export default function WorkoutPage() {
       <header className="border-4 border-black p-6 mb-8">
         <div className="flex justify-between">
           <div>
-            <h1 className="text-6xl font-bold mb-4">{workout.name}</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-6xl font-bold mb-4">{workout.name}</h1>
+              <span className="text-6xl font-light text-gray-400">
+                {workout.timeCap ? `(${formatTime(workout.timeCap)})` : ''}
+              </span>
+            </div>
             <p className="text-xl border-l-4 border-black pl-4 whitespace-pre-wrap">
               {workout.description}
             </p>

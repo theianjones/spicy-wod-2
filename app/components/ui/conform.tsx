@@ -232,6 +232,34 @@ export function ConformMinutesSecondsInput<T extends string | undefined>({
   );
 }
 
+export function ConformTimeCapInput<T extends number | undefined>({
+  meta,
+  label,
+  description,
+  className,
+  ...props
+}: FormFieldProps<T>) {
+  const [scores, setScores] = useState<number>(Number(meta.initialValue) ?? 0);
+
+  return (
+    <FormItem className={className} {...props}>
+      <input type="hidden" name={meta.name} value={JSON.stringify(scores)} />
+      {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
+      <FormControl>
+        <MinutesSecondsInput
+          key={meta.id}
+          defaultValue={Number(meta.initialValue)}
+          onChange={({ minutes, seconds }) => {
+            setScores((minutes ?? 0) * 60 + (seconds ?? 0));
+          }}
+        />
+      </FormControl>
+      {description && <FormDescription>{description}</FormDescription>}
+      <FormMessage>{meta.errors}</FormMessage>
+    </FormItem>
+  );
+}
+
 export function ConformToggleGroup<T extends string | undefined>({
   meta,
   label,
@@ -241,8 +269,6 @@ export function ConformToggleGroup<T extends string | undefined>({
   size,
   ...props
 }: FormFieldProps<T> & { children: React.ReactNode; size?: 'default' | 'sm' | 'lg' }) {
-
-  console.log({value: meta.value})
   return (
     <FormItem className={cn('flex flex-col gap-2', className)} {...props}>
       {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}

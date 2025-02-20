@@ -50,6 +50,7 @@ export const workoutSchema = baseIdSchema.extend({
     .nullable(),
   repsPerRound: z.coerce.number().int().optional(),
   roundsToScore: z.coerce.number().int().optional(),
+  timeCap: z.coerce.number().int().optional(),
   userId: z.string().uuid().optional(),
   sugarId: z.string().optional().nullable(),
   tiebreakScheme: z.enum(['time', 'reps']).nullish(),
