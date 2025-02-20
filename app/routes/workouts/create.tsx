@@ -29,70 +29,65 @@ export async function action({ request, context }: Route.ActionArgs) {
   const data = submission.value;
 
   try {
-    if (data.movements) {
-      // verify all movements exist and get their IDs
-      const movementQuery = `SELECT id FROM movements WHERE id IN (${data.movements
-        .map(() => '?')
-        .join(',')})`;
+    // First verify the user exists
+    const userExists = await db
+      .prepare('SELECT id FROM users WHERE id = ?')
+      .bind(session.userId)
+      .first();
 
-      const { results: existingMovements } = await db
-        .prepare(movementQuery)
-        .bind(...data.movements)
-        .all();
-
-      if (existingMovements.length !== data.movements.length) {
-        const foundIds = existingMovements.map(m => m.id);
-        const missingIds = data.movements.filter((id: string) => !foundIds.includes(id));
-        throw new Error(`Movements not found: ${missingIds.join(', ')}`);
-      }
+    if (!userExists) {
+      throw new Error('User not found');
     }
 
-    // Create workout first
-    const workoutQuery = `
-			INSERT INTO workouts (
-				id, name, description, scheme, 
-				reps_per_round, rounds_to_score,
-				tiebreak_scheme, secondary_scheme,
-				created_at, user_id
-			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)
-		`;
+    // Create workout with transaction to ensure data consistency
+    await db.batch([
+      db
+        .prepare(
+          `
+        INSERT INTO workouts (
+          id, name, description, scheme, time_cap,
+          reps_per_round, rounds_to_score,
+          tiebreak_scheme, secondary_scheme,
+          created_at, user_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)
+      `
+        )
+        .bind(
+          workoutId,
+          data.name,
+          data.description,
+          data.scheme,
+          data.timeCap ?? null,
+          data.repsPerRound ?? null,
+          data.roundsToScore ?? null,
+          data.tiebreakScheme ?? null,
+          data.secondaryScheme ?? null,
+          session.userId
+        ),
 
-    await db
-      .prepare(workoutQuery)
-      .bind(
-        workoutId,
-        data.name,
-        data.description,
-        data.scheme,
-        data.repsPerRound ?? null,
-        data.roundsToScore ?? null,
-        data.tiebreakScheme ?? null,
-        data.secondaryScheme ?? null,
-        session.userId
-      )
-      .run();
-
-    if (data.movements) {
-      // Then create workout movements one by one
-      for (const movementId of data.movements) {
-        const movementLinkQuery = `
-					INSERT INTO workout_movements (id, workout_id, movement_id)
-					VALUES (?, ?, ?)
-				`;
-
-        const linkValues = [uuidv4(), workoutId, movementId];
-
-        await db
-          .prepare(movementLinkQuery)
-          .bind(...linkValues)
-          .run();
-      }
-    }
+      ...(data.movements?.map(movementId =>
+        db
+          .prepare(
+            `
+          INSERT INTO workout_movements (id, workout_id, movement_id)
+          VALUES (?, ?, ?)
+        `
+          )
+          .bind(uuidv4(), workoutId, movementId)
+      ) ?? []),
+    ]);
 
     return redirect('/workouts');
   } catch (error) {
     console.error('Error creating workout:', error);
-    return submission.reply({ formErrors: ['Internal server error'] });
+    // Return more specific error message
+    return submission.reply({
+      formErrors: [
+        error instanceof Error
+          ? error.message
+          : 'Internal server error - Foreign key constraint failed',
+      ],
+    });
   }
 }
 

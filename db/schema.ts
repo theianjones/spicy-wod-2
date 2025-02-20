@@ -43,6 +43,7 @@ export const workouts = sqliteTable('workouts', {
   createdAt: integer('created_at', { mode: 'timestamp' }),
   repsPerRound: integer('reps_per_round'),
   roundsToScore: integer('rounds_to_score').default(1),
+  timeCap: integer('time_cap'),
   userId: text('user_id').references(() => users.id),
   sugarId: text('sugar_id'),
   tiebreakScheme: text('tiebreak_scheme', { enum: ['time', 'reps'] }),

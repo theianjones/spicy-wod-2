@@ -1,17 +1,26 @@
+import React, { FormEvent } from 'react';
 import { useForm, type SubmissionResult } from '@conform-to/react';
 import { parseWithZod } from '@conform-to/zod';
 import { useLoaderData } from 'react-router';
 import { Button } from '~/components/ui/button';
 import { loader } from '~/routes/workouts/create';
 import { workoutSchema, type Workout } from '~/schemas/models';
-import { ConformInput, ConformMultiSelect, ConformSelect, ConformTextarea } from './ui/conform';
+import {
+  ConformInput,
+  ConformMultiSelect,
+  ConformSelect,
+  ConformTextarea,
+  ConformTimeCapInput,
+} from './ui/conform';
 import { FormError, FormLabel } from './ui/form';
+
 
 type FormWorkout = Omit<Workout, 'id'>;
 const formWorkoutSchema = workoutSchema.omit({ id: true });
 
 export function WorkoutForm({ lastResult }: { lastResult?: SubmissionResult }) {
   const { movements } = useLoaderData<typeof loader>();
+  const [currentScheme, setCurrentScheme] = React.useState<string | undefined>(undefined);
   const [form, fields] = useForm<FormWorkout>({
     id: 'workout',
     shouldValidate: 'onSubmit',
@@ -55,6 +64,10 @@ export function WorkoutForm({ lastResult }: { lastResult?: SubmissionResult }) {
           </FormLabel>
           <ConformSelect
             meta={fields.scheme}
+            onChange={(e: FormEvent<HTMLDivElement>) => {
+              const target = e.target as HTMLSelectElement;
+              setCurrentScheme(target.value);
+            }}
             options={[
               { value: 'time', label: 'Time' },
               { value: 'time-with-cap', label: 'Time with Cap' },
@@ -72,6 +85,18 @@ export function WorkoutForm({ lastResult }: { lastResult?: SubmissionResult }) {
             className="mt-1 block w-full"
           />
         </div>
+
+        {currentScheme === 'time-with-cap' && (
+          <div>
+            <FormLabel htmlFor={fields.timeCap.id} className="text-sm font-bold uppercase block">
+              Time Cap
+            </FormLabel>
+            <ConformTimeCapInput meta={fields.timeCap} className="mt-1 block w-full" />
+            {fields.timeCap.errors && (
+              <div className="text-red-500 text-sm mt-1">{fields.timeCap.errors}</div>
+            )}
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-4">
           <div>
