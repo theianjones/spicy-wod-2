@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // Base schemas for common fields
 const baseIdSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().uuid().optional(),
 });
 
 // Users schema
@@ -48,9 +48,9 @@ export const workoutSchema = baseIdSchema.extend({
     .transform(date => new Date(date))
     .optional()
     .nullable(),
-  repsPerRound: z.coerce.number().int().optional().nullable(),
-  roundsToScore: z.coerce.number().int().optional().nullable(),
-  userId: z.string().uuid().optional().nullable(),
+  repsPerRound: z.coerce.number().int().optional(),
+  roundsToScore: z.coerce.number().int().optional(),
+  userId: z.string().uuid().optional(),
   sugarId: z.string().optional().nullable(),
   tiebreakScheme: z.enum(['time', 'reps']).nullish(),
   secondaryScheme: z
@@ -82,9 +82,9 @@ export const workoutMovementSchema = baseIdSchema.extend({
 // Base Result schema
 export const baseResultSchema = baseIdSchema.extend({
   userId: z.string(), // TODO: change to uuid, I'm spoofing id to 1 for now
-  date: z.number().int(),
+  date: z.date({ coerce: true }),
   type: z.string(),
-  notes: z.string().optional(),
+  notes: z.string().nullish(),
 });
 
 // WOD Results schema
@@ -95,14 +95,15 @@ export const wodResultSchema = baseIdSchema.extend({
 
 // WOD Sets schema
 export const wodSetSchema = baseIdSchema.extend({
-  resultId: z.string().uuid(),
   score: z.number().int().optional(),
   setNumber: z.number().int(),
 });
 
 export const allWodResultSchema = baseResultSchema
   .merge(wodResultSchema)
-  .merge(wodSetSchema.omit({ resultId: true }));
+  .extend({
+    sets: z.array(wodSetSchema.omit({ id: true }))
+  });
 
 // Strength Results schema
 export const strengthResultSchema = baseIdSchema.extend({

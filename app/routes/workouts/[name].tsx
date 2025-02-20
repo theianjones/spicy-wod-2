@@ -1,13 +1,30 @@
 import { CalendarDays, Trophy, X } from 'lucide-react';
-import { Link, useLoaderData } from 'react-router';
-import { formatTime } from '~/utils/format-time';
+import { Form, Link, Outlet, redirect, useLoaderData } from 'react-router';
 import { Button } from '~/components/ui/button';
+import { ScoreDisplay } from '~/components/workouts/score-display';
 import { WorkoutSchemeIcon } from '~/components/workouts/workout-scheme-icon';
-import { getResultsForWodbyUserId } from '~/lib/results';
+import { deleteWodResult, getResultsForWodbyUserId } from '~/lib/results';
 import { getWorkoutWithMovementsByIdOrName } from '~/lib/workouts';
 import { requireAuth } from '~/middleware/auth';
-import { AllWodResult } from '~/schemas/models';
-import type { Route } from '../+types/root';
+import { AllWodResult, type Workout } from '~/schemas/models';
+import type { Route } from '../workouts/+types/[name]';
+
+
+export async function action({ request, context, params }: Route.ActionArgs) {
+  const session = await requireAuth(request, context);
+  const formData = await request.formData();
+  const resultId = formData.get('resultId') as string;
+
+  if (!resultId) {
+    throw new Response('Result ID is required', { status: 400 });
+  }
+
+  // Delete the result
+  await deleteWodResult(resultId, context);
+
+  // Redirect back to the workout page
+  return redirect(`/workouts/${params.name}`);
+}
 
 export async function loader({ request, context, params }: Route.LoaderArgs) {
   const session = await requireAuth(request, context);
@@ -18,7 +35,7 @@ export async function loader({ request, context, params }: Route.LoaderArgs) {
 
   const workout = await getWorkoutWithMovementsByIdOrName(params.name, context);
 
-  if (!workout) {
+  if (!workout || !workout.id) {
     throw new Response('Not Found', { status: 404 });
   }
 
@@ -42,8 +59,11 @@ export default function WorkoutPage() {
             </p>
           </div>
           <div className="flex flex-col gap-4 justify-between">
-            <Button className="bg-black text-white hover:bg-white hover:text-black border-4 border-black text-xl px-8 py-6 font-mono">
-              LOG SCORE
+            <Button
+              className="bg-black text-white hover:bg-white hover:text-black border-4 border-black text-xl px-8 py-6 font-mono"
+              asChild
+            >
+              <Link to="log-result">LOG SCORE</Link>
             </Button>
           </div>
         </div>
@@ -59,7 +79,7 @@ export default function WorkoutPage() {
           <div className="">
             <h2 className="text-2xl font-bold mb-4">MOVEMENTS</h2>
             <div className="flex flex-wrap gap-2">
-              {workout.movements.map(movement => (
+              {workout.movements?.map(movement => (
                 <Link
                   key={movement}
                   to={`/movements/${movement}`}
@@ -84,7 +104,7 @@ export default function WorkoutPage() {
 
         <div className="overflow-x-auto">
           {results.length > 0 ? (
-            <ResultsTable results={results} />
+            <ResultsTable results={results} workout={workout} />
           ) : (
             <div className="flex items-center justify-center p-6 text-xl min-h-[300px]">
               No results yet.
@@ -93,57 +113,25 @@ export default function WorkoutPage() {
         </div>
       </div>
 
-      {/* Add Score Form - Initially Hidden */}
-      <div className="fixed inset-0 bg-black/80 hidden items-center justify-center">
-        <div className="bg-white border-4 border-black p-8 max-w-2xl w-full mx-4">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-3xl font-bold">LOG NEW SCORE</h2>
-            <Button variant="ghost" size="icon" className="hover:bg-black hover:text-white">
-              <X className="h-6 w-6" />
-            </Button>
-          </div>
-          <form className="space-y-6">
-            <div className="grid gap-2">
-              <label className="text-xl font-bold" htmlFor="time">
-                TIME
-              </label>
-              <input
-                id="time"
-                type="text"
-                className="border-4 border-black p-4 text-2xl font-mono"
-                placeholder="00:00"
-              />
-            </div>
-            <div className="grid gap-2">
-              <label className="text-xl font-bold" htmlFor="notes">
-                NOTES
-              </label>
-              <textarea
-                id="notes"
-                className="border-4 border-black p-4 text-xl font-mono min-h-[100px]"
-                placeholder="How did it go?"
-              />
-            </div>
-            <Button className="w-full bg-black text-white hover:bg-white hover:text-black border-4 border-black text-xl py-6 font-mono">
-              SUBMIT
-            </Button>
-          </form>
-        </div>
-      </div>
+      {/* Add Score Form */}
+      <Outlet />
     </div>
   );
 }
 
-function ResultsTable({ results }: { results: AllWodResult[] }) {
-  // Find the minimum score (best time)
-  const bestScore = Math.min(...results.map(r => r?.score ?? Infinity));
-
+function ResultsTable({
+  results,
+  workout,
+}: {
+  results: AllWodResult[];
+  workout: Pick<Workout, 'scheme'>;
+}) {
   return (
     <table className="w-full border-collapse">
       <thead>
         <tr className="border-b-4 border-black">
           <th className="text-left p-4 text-xl">DATE</th>
-          <th className="text-left p-4 text-xl">TIME</th>
+          <th className="text-left p-4 text-xl">SCORE</th>
           <th className="text-left p-4 text-xl">SCALE</th>
           <th className="text-left p-4 text-xl">NOTES</th>
           <th className="text-left p-4 text-xl"></th>
@@ -158,16 +146,37 @@ function ResultsTable({ results }: { results: AllWodResult[] }) {
             <td className="p-4 text-lg">{new Date(result?.date ?? 0).toLocaleDateString()}</td>
             <td className="p-4 text-lg font-bold">
               <span className="relative flex items-center gap-2">
-                {formatTime(result?.score ?? 0)}
-                {result?.score === bestScore && <Trophy className="h-5 w-5 " />}
+                {result.sets.map(set => (
+                  <div key={set.setNumber} className="flex items-center gap-1">
+                    {result.sets.length > 1 && (
+                      <span className="text-sm text-gray-500">({set.setNumber})</span>
+                    )}
+                    <ScoreDisplay workout={workout} score={set.score ?? 0} />
+                  </div>
+                ))}
               </span>
             </td>
             <td className="p-4 text-lg">{result?.scale}</td>
             <td className="p-4 text-lg">{result?.notes}</td>
             <td className="p-4">
-              <Button variant="ghost" size="icon" className="hover:bg-white hover:text-black">
-                <X className="h-5 w-5" />
-              </Button>
+              <Form
+                method="post"
+                onSubmit={event => {
+                  if (!confirm('Are you sure you want to delete this result?')) {
+                    event.preventDefault();
+                  }
+                }}
+              >
+                <input type="hidden" name="resultId" value={result.id} />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="hover:bg-white hover:text-black"
+                  type="submit"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </Form>
             </td>
           </tr>
         ))}

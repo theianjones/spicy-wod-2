@@ -1,15 +1,17 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { type FieldMetadata } from '@conform-to/react';
-
+import { cn } from '~/lib/utils';
 import { Combobox } from './combobox';
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from './form';
 import { Input } from './input';
+import { MinutesSecondsInput } from './minutes-seconds-input';
 import { MultiSelect } from './multi-select';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 import { Textarea } from './textarea';
+import { ToggleGroup } from './toggle-group';
 
-interface FormFieldProps<T extends string | string[] | number | undefined>
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface FormFieldProps<T> extends React.HTMLAttributes<HTMLDivElement> {
   meta: FieldMetadata<T>;
   label?: string;
   description?: string;
@@ -188,6 +190,70 @@ export function ConformCombobox<T extends string | undefined>({
           searchPlaceholder={searchPlaceholder}
           emptyMessage={emptyMessage}
         />
+      </FormControl>
+      {description && <FormDescription>{description}</FormDescription>}
+      <FormMessage>{meta.errors}</FormMessage>
+    </FormItem>
+  );
+}
+
+export function ConformMinutesSecondsInput<T extends string | undefined>({
+  meta,
+  label,
+  description,
+  className,
+  numberOfRounds,
+  ...props
+}: FormFieldProps<T> & { numberOfRounds: number }) {
+  const initialValues = meta.initialValue ? JSON.parse(meta.initialValue as string) : {};
+  const [scores, setScores] = useState<{ [key: number]: number }>(initialValues);
+
+  return (
+    <FormItem className={className} {...props}>
+      <input type="hidden" name={meta.name} value={JSON.stringify(scores)} />
+      {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
+      <FormControl>
+        <div className="flex flex-col gap-4">
+          {Array.from({ length: !!numberOfRounds ? numberOfRounds : 1 }).map((_, index) => (
+            <MinutesSecondsInput
+              key={`${meta.id}-${index}`}
+              defaultValue={initialValues?.[index] ?? undefined}
+              onChange={({ minutes, seconds }) => {
+                console.log(minutes, seconds);
+                setScores(prev => ({ ...prev, [index]: (minutes ?? 0) * 60 + (seconds ?? 0) }));
+              }}
+            />
+          ))}
+        </div>
+      </FormControl>
+      {description && <FormDescription>{description}</FormDescription>}
+      <FormMessage>{meta.errors}</FormMessage>
+    </FormItem>
+  );
+}
+
+export function ConformToggleGroup<T extends string | undefined>({
+  meta,
+  label,
+  description,
+  className,
+  children,
+  size,
+  ...props
+}: FormFieldProps<T> & { children: React.ReactNode; size?: 'default' | 'sm' | 'lg' }) {
+
+  console.log({value: meta.value})
+  return (
+    <FormItem className={cn('flex flex-col gap-2', className)} {...props}>
+      {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
+      <FormControl>
+        <ToggleGroup
+          type="single"
+          size={size}
+          className="w-fit"
+        >
+          {children}
+        </ToggleGroup>
       </FormControl>
       {description && <FormDescription>{description}</FormDescription>}
       <FormMessage>{meta.errors}</FormMessage>

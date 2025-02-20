@@ -5,7 +5,7 @@ import { generateSalt, hashPassword } from '~/utils/auth';
 import { AuthForm } from '~/components/auth-form';
 import { redirectIfAuthenticated } from '~/middleware/auth';
 import { signupSchema } from '~/schemas/auth';
-import type { Route } from '../+types/root';
+import type { Route } from '../authentication/+types/signup';
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   await redirectIfAuthenticated(request, context);

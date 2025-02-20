@@ -23,7 +23,7 @@ import { Separator } from './separator';
  * Uses class-variance-authority (cva) to define different styles based on "variant" prop.
  */
 const multiSelectVariants = cva(
-  'm-1 transition-transform duration-100 hover:-translate-y-[2px] border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
+  'm-1 transition-transform duration-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border-[3px] border-black',
   {
     variants: {
       variant: {
@@ -180,7 +180,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
             {...props}
             onClick={handleTogglePopover}
             className={cn(
-              'flex w-full p-2 border-[3px] border-black min-h-12 h-auto items-center justify-between bg-white hover:bg-gray-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-100 hover:-translate-y-[2px] [&_svg]:pointer-events-auto',
+              'flex w-full p-2 border-[3px] border-black min-h-12 h-auto items-center justify-between bg-white hover:bg-gray-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-100 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] [&_svg]:pointer-events-auto',
               className
             )}
           >

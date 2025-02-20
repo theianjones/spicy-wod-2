@@ -33,5 +33,44 @@ export async function getResultsForWodbyUserId(
     .bind(userId, workoutId)
     .all();
 
-  return result.results.map(result => allWodResultSchema.parse(result));
+  // Transform the results
+  const transformedResults = result.results.reduce((acc: any[], curr) => {
+    const existingResult = acc.find(r => r.id === curr.id);
+
+    if (!existingResult) {
+      // Create new result object with first set
+      acc.push({
+        id: curr.id,
+        userId: curr.userId,
+        date: curr.date,
+        type: curr.type,
+        notes: curr.notes,
+        workoutId: curr.workoutId,
+        scale: curr.scale,
+        sets: [{
+          score: curr.score,
+          setNumber: curr.setNumber
+        }]
+      });
+    } else {
+      // Add set to existing result
+      existingResult.sets.push({
+        score: curr.score,
+        setNumber: curr.setNumber
+      });
+    }
+    return acc;
+  }, []);
+
+  return transformedResults.map(result => allWodResultSchema.parse(result));
+}
+
+export async function deleteWodResult(resultId: string, context: Route.ActionArgs['context']) {
+  const db = context.cloudflare.env.DB;
+
+  await db.prepare(`DELETE FROM wod_sets WHERE result_id = ?`).bind(resultId).run();
+
+  await db.prepare(`DELETE FROM wod_results WHERE id = ?`).bind(resultId).run();
+
+  await db.prepare(`DELETE FROM results WHERE id = ?`).bind(resultId).run();
 }

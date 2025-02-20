@@ -40,29 +40,13 @@ function WorkoutCard({ workout }: WorkoutCardProps) {
           </div>
 
           <div className="space-y-1">
-            <CardDescription className="text-sm text-blac font-semibold">
+            <CardDescription className="text-sm text-black font-semibold whitespace-pre-wrap">
               {workout.description}
             </CardDescription>
           </div>
         </CardHeader>
 
-        <CardContent className=" p-6 space-y-4">
-          {(Boolean(workout.roundsToScore) || Boolean(workout.repsPerRound)) && (
-            <div className="grid grid-cols-2 gap-4">
-              {workout.repsPerRound && (
-                <div className="space-y-1">
-                  <div className="uppercase text-xs font-bold tracking-wide">REPS PER ROUND</div>
-                  <div className="text-sm">{workout.repsPerRound}</div>
-                </div>
-              )}
-              {workout.roundsToScore && (
-                <div className="space-y-1">
-                  <div className="text-sm">{workout.roundsToScore}</div>
-                </div>
-              )}
-            </div>
-          )}
-        </CardContent>
+
         <CardFooter className="flex justify-between">
           <div>
             {workout.movements && workout.movements.length > 0 && (
@@ -90,7 +74,7 @@ function WorkoutCard({ workout }: WorkoutCardProps) {
             )}
           </div>
           <Link
-            to={`/workouts/${workout.userId ? workout.id : workout.name}`}
+            to={`/workouts/${workout.userId ? workout.id : workout.name.toLowerCase()}`}
             className="border border-black text-black text-xs px-1 py-0.5 rounded-none flex items-center gap-1 font-semibold"
           >
             Details
