@@ -2,9 +2,18 @@
 -- The values below are just placeholders for development/testing.
 
 -- Clear existing data
+-- Delete data in the correct order based on schema.ts
+DELETE FROM monostructural_sets;
+DELETE FROM strength_sets;
+DELETE FROM wod_sets;
+DELETE FROM monostructural_results;
+DELETE FROM strength_results;
+DELETE FROM wod_results;
+DELETE FROM results;
 DELETE FROM workout_movements;
 DELETE FROM workouts;
 DELETE FROM movements;
+DELETE FROM users;
 
 -- Seed movements table - Strength movements
 INSERT INTO movements (id, name, type) VALUES 
@@ -74,7 +83,7 @@ INSERT INTO movements (id, name, type) VALUES
 ('00000000-0000-0000-0000-000000000060', 'assault bike', 'monostructural'),
 ('00000000-0000-0000-0000-000000000061', 'echo bike', 'monostructural');
 
--- Seed workouts table
+-- Seed workouts table			
 INSERT INTO workouts (id, name, description, scheme, created_at, rounds_to_score) VALUES 
 ('10000000-0000-0000-0000-000000000001', 'Fran', '21-15-9 reps of thrusters (95/65 lbs) and pull-ups', 'time', CURRENT_TIMESTAMP, 1),
 ('10000000-0000-0000-0000-000000000002', 'Angie', '100 pull-ups 100 push-ups 100 sit-ups 100 squats', 'time', CURRENT_TIMESTAMP, 1),
