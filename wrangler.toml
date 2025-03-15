@@ -21,3 +21,4 @@ migrations_dir = "./drizzle"
 [[kv_namespaces]]
 binding = "USER_SESSIONS"
 id = "9ff4a16a8c094b10a4d980b92cd9a1d4"
+
