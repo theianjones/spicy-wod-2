@@ -37,13 +37,11 @@ const ToggleGroupItem = React.forwardRef<
 >(({ className, children, ...props }, ref) => {
   const context = React.useContext(ToggleGroupContext);
 
-  console.log({context})
-
   return (
     <ToggleGroupPrimitive.Item
       ref={ref}
       className={cn(
-        'inline-flex items-center justify-center gap-2 text-base font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0 border-r-[3px] border-black last:border-r-0 data-[state=on]:bg-black data-[state=on]:text-white hover:bg-gray-100',
+        'inline-flex flex-1 items-center justify-center gap-2 text-base font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0 border-r-[3px] border-black last:border-r-0 data-[state=on]:bg-black data-[state=on]:text-white hover:bg-gray-100',
         {
           'h-12 px-4': context.size === 'default',
           'h-10 px-3': context.size === 'sm',

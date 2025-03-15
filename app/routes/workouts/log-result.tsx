@@ -1,66 +1,70 @@
 import { parseWithZod } from '@conform-to/zod';
 import { redirect, useActionData, useNavigate, useRouteLoaderData } from 'react-router';
+import { v4 as uuidv4 } from 'uuid';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog';
 import { resultsSchema, TimeLogForm } from '~/components/workouts/log-forms/time-form';
+import { getWorkoutWithMovementsByIdOrName } from '~/lib/workouts';
 import { requireAuth } from '~/middleware/auth';
 import { loader as parentLoader } from '~/routes/workouts/[name]';
 import type { Route } from '../workouts/+types/log-result';
-import { getWorkoutWithMovementsByIdOrName } from '~/lib/workouts';
-import { v4 as uuidv4 } from 'uuid';
-
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   await requireAuth(request, context);
   return null;
 }
 
-export const action = async ({ request, context }: Route.ActionArgs) => {
+export const action = async ({ params, request, context }: Route.ActionArgs) => {
   const session = await requireAuth(request, context);
   const db = context.cloudflare.env.DB;
 
+  const { name } = params;
 
+  const workout = await getWorkoutWithMovementsByIdOrName(name, context);
+  console.log({ workout });
   const formData = await request.formData();
-  const workoutId = formData.get('workoutId') as string;
-  const workout = await getWorkoutWithMovementsByIdOrName(workoutId, context);
-
-
-  const scores = JSON.parse(formData.get('scores') as string)
-  formData.set('scores', JSON.stringify(scores));
-
-  console.log({formData})
-
-  const submission = parseWithZod(formData, { schema: resultsSchema(workout.roundsToScore ?? 1) });
-
-  console.log({submission})
+  const submission = parseWithZod(formData, { schema: resultsSchema(workout) });
 
   if (submission.status !== 'success') return submission.reply();
 
-  const data = submission.value;
+  const { scores, scale, notes, workoutId } = submission.value;
 
   const resultId = uuidv4();
 
-  console.log({data, scores: Object.values(scores)})
-
   try {
     // Insert base result
-    await db.prepare(`
+    await db
+      .prepare(
+        `
       INSERT INTO results (id, user_id, date, type, notes)
       VALUES (?, ?, CURRENT_TIMESTAMP, 'wod', ?)
-    `).bind(resultId, session.userId, data?.notes ?? null).run();
+    `
+      )
+      .bind(resultId, session.userId, notes ?? null)
+      .run();
 
     // Insert WOD result
-    await db.prepare(`
+    await db
+      .prepare(
+        `
       INSERT INTO wod_results (id, workout_id, scale)
       VALUES (?, ?, ?)
-    `).bind(resultId, workoutId, data.scale).run();
+    `
+      )
+      .bind(resultId, workoutId, scale)
+      .run();
 
     // Insert scores as sets
     const arrayOfScores = Object.values(scores);
     for (let i = 0; i < arrayOfScores.length; i++) {
-      await db.prepare(`
+      await db
+        .prepare(
+          `
         INSERT INTO wod_sets (id, result_id, score, set_number)
         VALUES (?, ?, ?, ?)
-      `).bind(uuidv4(), resultId, arrayOfScores[i], i + 1).run();
+      `
+        )
+        .bind(uuidv4(), resultId, arrayOfScores[i], i + 1)
+        .run();
     }
 
     return redirect(`/workouts/${workout.name.toLowerCase()}`);

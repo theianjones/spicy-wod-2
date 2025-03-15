@@ -1,17 +1,13 @@
 import { useLoaderData } from 'react-router';
-import { z } from 'zod';
 import { WorkoutCard } from '~/components/workouts/workout-card';
 import { getMovementByIdWithWorkouts } from '~/lib/movements';
 import { requireAuth } from '~/middleware/auth';
 import type { Route } from '../movements/+types/[name]';
 
-const loaderParamsSchema = z.object({
-  name: z.string(),
-});
-
 export async function loader({ params, context, request }: Route.LoaderArgs) {
   await requireAuth(request, context);
-  const { name } = loaderParamsSchema.parse(params);
+  const { name } = params;
+  console.log('name', name);
   const { movement, workouts } = await getMovementByIdWithWorkouts({ context, name });
 
   return { movement, workouts };

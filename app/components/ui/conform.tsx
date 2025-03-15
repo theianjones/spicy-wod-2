@@ -197,7 +197,7 @@ export function ConformCombobox<T extends string | undefined>({
   );
 }
 
-export function ConformMinutesSecondsInput<T extends string | undefined>({
+export function ConformMinutesSecondsInput<T extends string[] | undefined>({
   meta,
   label,
   description,
@@ -205,16 +205,19 @@ export function ConformMinutesSecondsInput<T extends string | undefined>({
   numberOfRounds,
   ...props
 }: FormFieldProps<T> & { numberOfRounds: number }) {
+  console.log(meta.initialValue);
   const initialValues = meta.initialValue ? JSON.parse(meta.initialValue as string) : {};
   const [scores, setScores] = useState<{ [key: number]: number }>(initialValues);
 
   return (
     <FormItem className={className} {...props}>
-      <input type="hidden" name={meta.name} value={JSON.stringify(scores)} />
+      {Object.values(scores).map(score => (
+        <input type="hidden" name={meta.name} value={score} />
+      ))}
       {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
       <FormControl>
         <div className="flex flex-col gap-4">
-          {Array.from({ length: !!numberOfRounds ? numberOfRounds : 1 }).map((_, index) => (
+          {Array.from({ length: numberOfRounds ? numberOfRounds : 1 }).map((_, index) => (
             <MinutesSecondsInput
               key={`${meta.id}-${index}`}
               defaultValue={initialValues?.[index] ?? undefined}
@@ -241,16 +244,20 @@ export function ConformToggleGroup<T extends string | undefined>({
   size,
   ...props
 }: FormFieldProps<T> & { children: React.ReactNode; size?: 'default' | 'sm' | 'lg' }) {
+  const [value, setValue] = useState(meta.initialValue?.toString());
 
-  console.log({value: meta.value})
   return (
     <FormItem className={cn('flex flex-col gap-2', className)} {...props}>
       {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
+      <input type="hidden" name={meta.name} value={value} />
       <FormControl>
         <ToggleGroup
           type="single"
           size={size}
-          className="w-fit"
+          defaultValue={meta.initialValue?.toString()}
+          onValueChange={value => {
+            setValue(value);
+          }}
         >
           {children}
         </ToggleGroup>
