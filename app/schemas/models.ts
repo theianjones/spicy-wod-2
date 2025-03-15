@@ -50,7 +50,7 @@ export const workoutSchema = baseIdSchema.extend({
     .nullable(),
   repsPerRound: z.coerce.number().int().optional(),
   roundsToScore: z.coerce.number().int().optional(),
-  userId: z.string().uuid().optional(),
+  userId: z.string().uuid().nullish(),
   sugarId: z.string().optional().nullable(),
   tiebreakScheme: z.enum(['time', 'reps']).nullish(),
   secondaryScheme: z
@@ -99,11 +99,9 @@ export const wodSetSchema = baseIdSchema.extend({
   setNumber: z.number().int(),
 });
 
-export const allWodResultSchema = baseResultSchema
-  .merge(wodResultSchema)
-  .extend({
-    sets: z.array(wodSetSchema.omit({ id: true }))
-  });
+export const allWodResultSchema = baseResultSchema.merge(wodResultSchema).extend({
+  sets: z.array(wodSetSchema.omit({ id: true })),
+});
 
 // Strength Results schema
 export const strengthResultSchema = baseIdSchema.extend({
