@@ -17,11 +17,9 @@
     "db:studio": "drizzle-kit studio --config drizzle.studio.config.ts",
     "db:seed": "wrangler d1 execute dev-spicy-db --local --file ./seed.sql",
     "db:list": "wrangler d1 migrations list dev-spicy-db --local",
-    "db:list:preview": "wrangler d1 migrations list dev-spicy-db --env preview",
-    "db:list:production": "wrangler d1 migrations list dev-spicy-db --env production",
+    "db:list:prod": "wrangler d1 migrations list dev-spicy-db",
     "db:apply": "drizzle-kit generate && wrangler d1 migrations apply dev-spicy-db --local",
-    "db:apply:preview": "wrangler d1 migrations apply dev-spicy-db --env preview",
-    "db:apply:production": "wrangler d1 migrations apply dev-spicy-db --env production",
+    "db:apply:prod": "wrangler d1 migrations apply dev-spicy-db",
     "prepare": "husky install",
     "lint-staged": "lint-staged"
   },
@@ -88,7 +86,7 @@
     "typescript": "^5.1.6",
     "vite": "^6.1.0",
     "vite-tsconfig-paths": "^5.1.4",
-    "wrangler": "3.107.3"
+    "wrangler": "^4.0.0"
   },
   "engines": {
     "node": ">=20.0.0"

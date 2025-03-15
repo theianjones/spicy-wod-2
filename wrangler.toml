@@ -21,3 +21,20 @@ migrations_dir = "./drizzle"
 [[kv_namespaces]]
 binding = "USER_SESSIONS"
 id = "9ff4a16a8c094b10a4d980b92cd9a1d4"
+
+# # Add production environment configuration
+# [env.production]
+# name = "spicy-wod"
+
+# # Production database binding
+# [[env.production.d1_databases]]
+# binding = "DB"
+# database_name = "prod-spicy-db"
+# database_id = "7b51eef2-3c22-414f-b2cc-d985bec53a14"
+# migrations_table = "drizzle_migrations"
+# migrations_dir = "./drizzle"
+
+# # Production KV namespace
+# [[env.production.kv_namespaces]]
+# binding = "USER_SESSIONS"
+# id = "385c17a172ad4410ba5e14556aa83bea"
