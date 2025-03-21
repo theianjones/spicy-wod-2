@@ -89,7 +89,7 @@ export async function action({ request, context }: Route.ActionArgs) {
       }
     }
 
-    return redirect('/workouts');
+    return redirect(`/workouts/${workoutId}`);
   } catch (error) {
     console.error('Error creating workout:', error);
     return submission.reply({ formErrors: ['Internal server error'] });
