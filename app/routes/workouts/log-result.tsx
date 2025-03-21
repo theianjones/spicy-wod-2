@@ -2,9 +2,15 @@ import { parseWithZod } from '@conform-to/zod';
 import { redirect, useActionData, useNavigate, useRouteLoaderData } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog';
-import { GenericNumericLogForm } from '~/components/workouts/log-forms/generic-numeric-form';
-import { PassFailLogForm } from '~/components/workouts/log-forms/pass-fail-form';
-import { RoundsRepsLogForm } from '~/components/workouts/log-forms/rounds-reps-form';
+import {
+  GenericNumericLogForm,
+  numericSchema,
+} from '~/components/workouts/log-forms/generic-numeric-form';
+import { PassFailLogForm, passFailSchema } from '~/components/workouts/log-forms/pass-fail-form';
+import {
+  RoundsRepsLogForm,
+  roundsRepsSchema,
+} from '~/components/workouts/log-forms/rounds-reps-form';
 import { resultsSchema, TimeLogForm } from '~/components/workouts/log-forms/time-form';
 import { getWorkoutWithMovementsByIdOrName } from '~/lib/workouts';
 import { requireAuth } from '~/middleware/auth';
@@ -25,7 +31,28 @@ export const action = async ({ params, request, context }: Route.ActionArgs) => 
   const workout = await getWorkoutWithMovementsByIdOrName(name, context);
   console.log({ workout });
   const formData = await request.formData();
-  const submission = parseWithZod(formData, { schema: resultsSchema(workout) });
+
+  // Use the appropriate schema based on the workout scheme
+  let schema;
+  switch (workout.scheme) {
+    case 'time':
+      schema = resultsSchema(workout);
+      break;
+    case 'time-with-cap':
+      schema = resultsSchema(workout, true);
+      break;
+    case 'pass-fail':
+      schema = passFailSchema(workout);
+      break;
+    case 'rounds-reps':
+      schema = roundsRepsSchema(workout);
+      break;
+    default:
+      schema = numericSchema(workout);
+      break;
+  }
+
+  const submission = parseWithZod(formData, { schema });
 
   if (submission.status !== 'success') return submission.reply();
 
@@ -57,7 +84,7 @@ export const action = async ({ params, request, context }: Route.ActionArgs) => 
       .run();
 
     // Insert scores as sets
-    const arrayOfScores = Object.values(scores);
+    const arrayOfScores = Array.isArray(scores) ? scores : [scores];
     for (let i = 0; i < arrayOfScores.length; i++) {
       await db
         .prepare(

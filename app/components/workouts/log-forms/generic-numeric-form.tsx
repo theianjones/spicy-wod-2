@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm, type SubmissionResult } from '@conform-to/react';
 import { parseWithZod } from '@conform-to/zod';
 import { z } from 'zod';
 import { Button } from '~/components/ui/button';
-import { ConformInput, ConformTextarea, ConformToggleGroup } from '~/components/ui/conform';
+import { ConformTextarea, ConformToggleGroup } from '~/components/ui/conform';
 import { FormLabel } from '~/components/ui/form';
 import { ToggleGroupItem } from '~/components/ui/toggle-group';
 import { Workout } from '~/schemas/models';
@@ -24,6 +24,7 @@ interface GenericNumericLogFormProps {
 export function GenericNumericLogForm({ workout, lastResult }: GenericNumericLogFormProps) {
   const initialValue = lastResult?.initialValue;
   const schema = useMemo(() => numericSchema(workout), [workout]);
+  const [score, setScore] = useState<string>('');
 
   const [form, { scores, scale, workoutId, notes }] = useForm<z.infer<typeof schema>>({
     lastResult,
@@ -60,18 +61,29 @@ export function GenericNumericLogForm({ workout, lastResult }: GenericNumericLog
     }
   };
 
+  const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setScore(e.target.value);
+  };
+
   return (
     <form method="post" className="p-4 border-2 border-black flex flex-col gap-4">
       <h2 className="text-2xl font-bold mb-4">
         Log {workout.scheme.charAt(0).toUpperCase() + workout.scheme.slice(1)} Result
       </h2>
       <input type="hidden" name={workoutId.name} value={workout.id} />
+      <input type="hidden" name={scores.name} value={score} />
 
       <div>
-        <FormLabel htmlFor={scores.id} className="text-sm font-bold uppercase block">
+        <FormLabel htmlFor="score-input" className="text-sm font-bold uppercase block">
           {getSchemeLabel()}
         </FormLabel>
-        <ConformInput meta={scores} type="number" className="mt-1 block w-full" />
+        <input
+          id="score-input"
+          type="number"
+          className="mt-1 block w-full p-2 border-2 border-black"
+          value={score}
+          onChange={handleScoreChange}
+        />
       </div>
 
       <div>

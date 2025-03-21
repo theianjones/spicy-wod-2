@@ -28,6 +28,8 @@ export function RoundsRepsLogForm({ workout, lastResult }: RoundsRepsLogFormProp
   const initialValue = lastResult?.initialValue;
   const schema = useMemo(() => roundsRepsSchema(workout), [workout]);
   const [totalReps, setTotalReps] = useState(0);
+  const [roundsValue, setRoundsValue] = useState<number>(workout.roundsToScore || 0);
+  const [repsValue, setRepsValue] = useState<number>(workout.repsPerRound || 0);
 
   const [form, { rounds, repsPerRound, scores, scale, workoutId, notes }] = useForm<
     z.infer<typeof schema>
@@ -46,29 +48,27 @@ export function RoundsRepsLogForm({ workout, lastResult }: RoundsRepsLogFormProp
     },
   });
 
+  // Handler for rounds input changes
+  const handleRoundsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10) || 0;
+    setRoundsValue(value);
+  };
+
+  // Handler for reps input changes
+  const handleRepsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10) || 0;
+    setRepsValue(value);
+  };
+
   // Calculate total reps whenever rounds or repsPerRound changes
   useEffect(() => {
-    const roundsValue = form.getFieldValue('rounds');
-    const repsValue = form.getFieldValue('repsPerRound');
-
     if (roundsValue && repsValue) {
-      const calculatedTotal = Number(roundsValue) * Number(repsValue);
+      const calculatedTotal = roundsValue * repsValue;
       setTotalReps(calculatedTotal);
-
-      // Update the hidden scores field with the calculated total
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = scores?.name || 'scores';
-      input.value = calculatedTotal.toString();
-
-      const existingInput = document.querySelector(`input[name="${scores?.name || 'scores'}"]`);
-      if (existingInput) {
-        existingInput.replaceWith(input);
-      } else if (scores?.name) {
-        form.elements?.appendChild?.(input);
-      }
+    } else {
+      setTotalReps(0);
     }
-  }, [form.getFieldValue('rounds'), form.getFieldValue('repsPerRound')]);
+  }, [roundsValue, repsValue]);
 
   return (
     <form method="post" id={form.id} className="p-4 border-2 border-black flex flex-col gap-4">
@@ -81,14 +81,28 @@ export function RoundsRepsLogForm({ workout, lastResult }: RoundsRepsLogFormProp
           <FormLabel htmlFor={rounds.id} className="text-sm font-bold uppercase block">
             Rounds Completed
           </FormLabel>
-          <ConformInput meta={rounds} type="number" className="mt-1 block w-full" />
+          <input
+            id={rounds.id}
+            name={rounds.name}
+            type="number"
+            className="mt-1 block w-full p-2 border-2 border-black"
+            defaultValue={workout.roundsToScore?.toString()}
+            onChange={handleRoundsChange}
+          />
         </div>
 
         <div>
           <FormLabel htmlFor={repsPerRound.id} className="text-sm font-bold uppercase block">
             Reps Per Round
           </FormLabel>
-          <ConformInput meta={repsPerRound} type="number" className="mt-1 block w-full" />
+          <input
+            id={repsPerRound.id}
+            name={repsPerRound.name}
+            type="number"
+            className="mt-1 block w-full p-2 border-2 border-black"
+            defaultValue={workout.repsPerRound?.toString()}
+            onChange={handleRepsChange}
+          />
         </div>
       </div>
 

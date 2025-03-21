@@ -1,11 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm, type SubmissionResult } from '@conform-to/react';
 import { parseWithZod } from '@conform-to/zod';
 import { z } from 'zod';
 import { Button } from '~/components/ui/button';
 import { ConformTextarea, ConformToggleGroup } from '~/components/ui/conform';
 import { FormLabel } from '~/components/ui/form';
-import { ToggleGroupItem } from '~/components/ui/toggle-group';
+import { ToggleGroup, ToggleGroupItem } from '~/components/ui/toggle-group';
 import { Workout } from '~/schemas/models';
 
 export const passFailSchema = (workout: Workout) =>
@@ -23,6 +23,7 @@ interface PassFailLogFormProps {
 
 export function PassFailLogForm({ workout, lastResult }: PassFailLogFormProps) {
   const initialValue = lastResult?.initialValue;
+  const [passFailValue, setPassFailValue] = useState<string>('1'); // Default to Pass
   const schema = useMemo(() => passFailSchema(workout), [workout]);
 
   const [form, { scores, scale, workoutId, notes }] = useForm<z.infer<typeof schema>>({
@@ -42,26 +43,37 @@ export function PassFailLogForm({ workout, lastResult }: PassFailLogFormProps) {
     <form method="post" className="p-4 border-2 border-black flex flex-col gap-4">
       <h2 className="text-2xl font-bold mb-4">Log Pass/Fail Result</h2>
       <input type="hidden" name={workoutId.name} value={workout.id} />
+      <input type="hidden" name={scores.name} value={passFailValue} />
 
       <div>
-        <FormLabel htmlFor={scores.id} className="text-sm font-bold uppercase block">
+        <FormLabel htmlFor={`${scores.id}-toggle`} className="text-sm font-bold uppercase block">
           Result
         </FormLabel>
-        <input type="hidden" id={scores.id} name={scores.name} value="" />
-        <ConformToggleGroup meta={scores} size="lg">
+
+        <ToggleGroup
+          type="single"
+          value={passFailValue}
+          onValueChange={value => {
+            if (value) setPassFailValue(value);
+          }}
+          className="mt-1"
+          size="lg"
+        >
           <ToggleGroupItem
             value="1"
+            id={`${scores.id}-pass`}
             className="bg-green-100 data-[state=on]:bg-green-600 data-[state=on]:text-white"
           >
             Pass
           </ToggleGroupItem>
           <ToggleGroupItem
             value="0"
+            id={`${scores.id}-fail`}
             className="bg-red-100 data-[state=on]:bg-red-600 data-[state=on]:text-white"
           >
             Fail
           </ToggleGroupItem>
-        </ConformToggleGroup>
+        </ToggleGroup>
       </div>
 
       <div>
