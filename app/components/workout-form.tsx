@@ -1,9 +1,7 @@
 import { useForm, type SubmissionResult } from '@conform-to/react';
 import { parseWithZod } from '@conform-to/zod';
-import { useLoaderData } from 'react-router';
 import { Button } from '~/components/ui/button';
-import { loader } from '~/routes/workouts/create';
-import { workoutSchema, type Workout } from '~/schemas/models';
+import { workoutSchema, type Movement, type Workout } from '~/schemas/models';
 import { ConformInput, ConformMultiSelect, ConformSelect, ConformTextarea } from './ui/conform';
 import { FormError, FormLabel } from './ui/form';
 
@@ -14,10 +12,15 @@ interface WorkoutFormProps {
   lastResult?: SubmissionResult;
   initialData?: FormWorkout;
   mode?: 'create' | 'edit';
+  movements: Movement[];
 }
 
-export function WorkoutForm({ lastResult, initialData, mode = 'create' }: WorkoutFormProps) {
-  const { movements } = useLoaderData<typeof loader>();
+export function WorkoutForm({
+  lastResult,
+  initialData,
+  mode = 'create',
+  movements,
+}: WorkoutFormProps) {
   const [form, fields] = useForm<FormWorkout>({
     id: 'workout',
     shouldValidate: 'onSubmit',
@@ -104,6 +107,7 @@ export function WorkoutForm({ lastResult, initialData, mode = 'create' }: Workou
                 label: string;
               }[]
             }
+            maxCount={10}
             placeholder="Select movements..."
             className="mt-1"
           />
