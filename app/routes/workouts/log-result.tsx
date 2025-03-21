@@ -2,6 +2,9 @@ import { parseWithZod } from '@conform-to/zod';
 import { redirect, useActionData, useNavigate, useRouteLoaderData } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog';
+import { GenericNumericLogForm } from '~/components/workouts/log-forms/generic-numeric-form';
+import { PassFailLogForm } from '~/components/workouts/log-forms/pass-fail-form';
+import { RoundsRepsLogForm } from '~/components/workouts/log-forms/rounds-reps-form';
 import { resultsSchema, TimeLogForm } from '~/components/workouts/log-forms/time-form';
 import { getWorkoutWithMovementsByIdOrName } from '~/lib/workouts';
 import { requireAuth } from '~/middleware/auth';
@@ -91,7 +94,30 @@ export default function LogWorkoutResult() {
         <DialogHeader>
           <DialogTitle>Log Workout Result</DialogTitle>
         </DialogHeader>
-        {workout.scheme === 'time' && <TimeLogForm workout={workout} lastResult={lastResult} />}
+        {(() => {
+          switch (workout.scheme) {
+            case 'time':
+              return <TimeLogForm workout={workout} lastResult={lastResult} />;
+            case 'time-with-cap':
+              return (
+                <TimeLogForm workout={workout} lastResult={lastResult} extendedForCap={true} />
+              );
+            case 'pass-fail':
+              return <PassFailLogForm workout={workout} lastResult={lastResult} />;
+            case 'rounds-reps':
+              return <RoundsRepsLogForm workout={workout} lastResult={lastResult} />;
+            case 'reps':
+            case 'emom':
+            case 'load':
+            case 'calories':
+            case 'meters':
+            case 'feet':
+            case 'points':
+              return <GenericNumericLogForm workout={workout} lastResult={lastResult} />;
+            default:
+              return <div>Unsupported scheme: {workout.scheme}</div>;
+          }
+        })()}
       </DialogContent>
     </Dialog>
   );
