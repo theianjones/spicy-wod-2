@@ -83,6 +83,7 @@ export function GenericNumericLogForm({ workout, lastResult }: GenericNumericLog
           className="mt-1 block w-full p-2 border-2 border-black"
           value={score}
           onChange={handleScoreChange}
+          min="0"
         />
       </div>
 

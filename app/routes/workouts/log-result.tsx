@@ -115,8 +115,12 @@ export default function LogWorkoutResult() {
 
   const { workout } = data;
 
+  const handleDialogClose = () => {
+    navigate(`/workouts/${workout.name.toLowerCase()}`);
+  };
+
   return (
-    <Dialog open onOpenChange={() => navigate('..')}>
+    <Dialog open onOpenChange={handleDialogClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Log Workout Result</DialogTitle>

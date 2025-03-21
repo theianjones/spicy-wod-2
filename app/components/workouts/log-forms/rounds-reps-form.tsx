@@ -27,9 +27,13 @@ interface RoundsRepsLogFormProps {
 export function RoundsRepsLogForm({ workout, lastResult }: RoundsRepsLogFormProps) {
   const initialValue = lastResult?.initialValue;
   const schema = useMemo(() => roundsRepsSchema(workout), [workout]);
-  const [totalReps, setTotalReps] = useState(0);
-  const [roundsValue, setRoundsValue] = useState<number>(workout.roundsToScore || 0);
-  const [repsValue, setRepsValue] = useState<number>(workout.repsPerRound || 0);
+
+  // Initialize state with workout values or defaults
+  const [roundsValue, setRoundsValue] = useState<number | undefined>(
+    workout.roundsToScore || undefined
+  );
+  const [repsValue, setRepsValue] = useState<number | undefined>(workout.repsPerRound || undefined);
+  const [totalReps, setTotalReps] = useState<number>(0);
 
   const [form, { rounds, repsPerRound, scores, scale, workoutId, notes }] = useForm<
     z.infer<typeof schema>
@@ -50,13 +54,13 @@ export function RoundsRepsLogForm({ workout, lastResult }: RoundsRepsLogFormProp
 
   // Handler for rounds input changes
   const handleRoundsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10) || 0;
+    const value = e.target.value === '' ? undefined : parseInt(e.target.value, 10);
     setRoundsValue(value);
   };
 
   // Handler for reps input changes
   const handleRepsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10) || 0;
+    const value = e.target.value === '' ? undefined : parseInt(e.target.value, 10);
     setRepsValue(value);
   };
 
@@ -86,8 +90,9 @@ export function RoundsRepsLogForm({ workout, lastResult }: RoundsRepsLogFormProp
             name={rounds.name}
             type="number"
             className="mt-1 block w-full p-2 border-2 border-black"
-            defaultValue={workout.roundsToScore?.toString()}
+            value={roundsValue === undefined ? '' : roundsValue}
             onChange={handleRoundsChange}
+            min="1"
           />
         </div>
 
@@ -100,8 +105,9 @@ export function RoundsRepsLogForm({ workout, lastResult }: RoundsRepsLogFormProp
             name={repsPerRound.name}
             type="number"
             className="mt-1 block w-full p-2 border-2 border-black"
-            defaultValue={workout.repsPerRound?.toString()}
+            value={repsValue === undefined ? '' : repsValue}
             onChange={handleRepsChange}
+            min="1"
           />
         </div>
       </div>
