@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/u
 import { resultsSchema, TimeLogForm } from '~/components/workouts/log-forms/time-form';
 import { getWorkoutWithMovementsByIdOrName } from '~/lib/workouts';
 import { requireAuth } from '~/middleware/auth';
-import { loader as parentLoader } from '~/routes/workouts/[name]';
+import { loader as parentLoader } from '~/routes/workouts/[name]/index';
 import type { Route } from '../workouts/+types/log-result';
 
 export async function loader({ request, context }: Route.LoaderArgs) {

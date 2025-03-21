@@ -1,5 +1,5 @@
 import { parseWithZod } from '@conform-to/zod';
-import { redirect, useActionData } from 'react-router';
+import { redirect, useActionData, useLoaderData } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
 import { WorkoutForm } from '~/components/workout-form';
 import { getAllMovements } from '~/lib/movements';
@@ -98,10 +98,11 @@ export async function action({ request, context }: Route.ActionArgs) {
 
 export default function CreateWorkoutPage() {
   const lastResult = useActionData<typeof action>();
+  const { movements } = useLoaderData<typeof loader>();
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-xl">
-        <WorkoutForm lastResult={lastResult} />
+        <WorkoutForm lastResult={lastResult} movements={movements} />
       </div>
     </div>
   );

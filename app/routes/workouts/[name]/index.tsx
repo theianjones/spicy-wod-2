@@ -7,7 +7,7 @@ import { deleteWodResult, getResultsForWodbyUserId } from '~/lib/results';
 import { getWorkoutWithMovementsByIdOrName } from '~/lib/workouts';
 import { requireAuth } from '~/middleware/auth';
 import { AllWodResult, type Workout } from '~/schemas/models';
-import type { Route } from '../workouts/+types/[name]';
+import type { Route } from '../../workouts/+types/[name]';
 
 
 export async function action({ request, context, params }: Route.ActionArgs) {
@@ -58,7 +58,13 @@ export default function WorkoutPage() {
               {workout.description}
             </p>
           </div>
-          <div className="flex flex-col gap-4 justify-between">
+          <div className="flex gap-4">
+            <Button
+              className="bg-white text-black hover:bg-white hover:text-black border-4 border-black text-xl px-8 py-6 font-mono"
+              asChild
+            >
+              <Link to="edit">EDIT</Link>
+            </Button>
             <Button
               className="bg-black text-white hover:bg-white hover:text-black border-4 border-black text-xl px-8 py-6 font-mono"
               asChild

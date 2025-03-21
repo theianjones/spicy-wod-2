@@ -1,21 +1,31 @@
 import { useForm, type SubmissionResult } from '@conform-to/react';
 import { parseWithZod } from '@conform-to/zod';
-import { useLoaderData } from 'react-router';
 import { Button } from '~/components/ui/button';
-import { loader } from '~/routes/workouts/create';
-import { workoutSchema, type Workout } from '~/schemas/models';
+import { workoutSchema, type Movement, type Workout } from '~/schemas/models';
 import { ConformInput, ConformMultiSelect, ConformSelect, ConformTextarea } from './ui/conform';
 import { FormError, FormLabel } from './ui/form';
 
 type FormWorkout = Omit<Workout, 'id'>;
 const formWorkoutSchema = workoutSchema.omit({ id: true });
 
-export function WorkoutForm({ lastResult }: { lastResult?: SubmissionResult }) {
-  const { movements } = useLoaderData<typeof loader>();
+interface WorkoutFormProps {
+  lastResult?: SubmissionResult;
+  initialData?: FormWorkout;
+  mode?: 'create' | 'edit';
+  movements: Movement[];
+}
+
+export function WorkoutForm({
+  lastResult,
+  initialData,
+  mode = 'create',
+  movements,
+}: WorkoutFormProps) {
   const [form, fields] = useForm<FormWorkout>({
     id: 'workout',
     shouldValidate: 'onSubmit',
     lastResult,
+    defaultValue: initialData,
     onValidate: ({ formData }: { formData: FormData }) =>
       parseWithZod(formData, { schema: formWorkoutSchema }),
   });
@@ -31,7 +41,9 @@ export function WorkoutForm({ lastResult }: { lastResult?: SubmissionResult }) {
       id={form.id}
       onSubmit={form.onSubmit}
     >
-      <h1 className="text-3xl font-bold tracking-tight text-black uppercase">Create Workout</h1>
+      <h1 className="text-3xl font-bold tracking-tight text-black uppercase">
+        {mode === 'edit' ? 'Edit Workout' : 'Create Workout'}
+      </h1>
 
       {form.errors && <FormError>{form.errors}</FormError>}
       <div className="space-y-4">
@@ -95,6 +107,7 @@ export function WorkoutForm({ lastResult }: { lastResult?: SubmissionResult }) {
                 label: string;
               }[]
             }
+            maxCount={10}
             placeholder="Select movements..."
             className="mt-1"
           />
@@ -104,7 +117,7 @@ export function WorkoutForm({ lastResult }: { lastResult?: SubmissionResult }) {
           type="submit"
           className="w-full bg-black text-white px-4 py-3 uppercase font-bold hover:bg-gray-800 transition-colors"
         >
-          Create Workout
+          {mode === 'edit' ? 'Save Changes' : 'Create Workout'}
         </Button>
       </div>
     </form>

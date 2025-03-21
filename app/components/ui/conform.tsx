@@ -132,7 +132,10 @@ export function ConformMultiSelect<T extends string[] | undefined>({
 }: ConformMultiSelectProps<T>) {
   return (
     <FormItem className={className} {...props}>
-      {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
+      <div className="flex flex-row items-center gap-2">
+        {label && <FormLabel htmlFor={meta.id}>{label}</FormLabel>}
+        {maxCount && <FormDescription>{maxCount} max</FormDescription>}
+      </div>
       <FormControl>
         <MultiSelect
           name={meta.name}
