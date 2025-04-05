@@ -5,8 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/u
 import { resultsSchema, TimeLogForm } from '~/components/workouts/log-forms/time-form';
 import { getWorkoutWithMovementsByIdOrName } from '~/lib/workouts';
 import { requireAuth } from '~/middleware/auth';
-import { loader as parentLoader } from '~/routes/workouts/[name]/index';
-import type { Route } from '../workouts/+types/log-result';
+import { loader as parentLoader } from '~/routes/workouts/[name].index';
+import type { Route } from './+types/log-result';
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   await requireAuth(request, context);
@@ -75,7 +75,7 @@ export const action = async ({ params, request, context }: Route.ActionArgs) => 
 };
 
 export default function LogWorkoutResult() {
-  const data = useRouteLoaderData<typeof parentLoader>('routes/workouts/[name]');
+  const data = useRouteLoaderData<typeof parentLoader>('routes/workouts/[name].index');
   const lastResult = useActionData<typeof action>();
   const navigate = useNavigate();
 

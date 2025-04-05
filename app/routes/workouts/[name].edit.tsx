@@ -5,8 +5,8 @@ import { WorkoutForm } from '~/components/workout-form';
 import { getAllMovements } from '~/lib/movements';
 import { getWorkoutWithMovementsByIdOrName } from '~/lib/workouts';
 import { requireAuth } from '~/middleware/auth';
-import { workoutSchema, type Movement } from '~/schemas/models';
-import type { Route } from '../+types/[name]';
+import { workoutSchema } from '~/schemas/models';
+import type { Route } from './+types/[name].edit';
 
 export async function loader({ params, request, context }: Route.LoaderArgs) {
   await requireAuth(request, context);
@@ -23,7 +23,7 @@ export async function loader({ params, request, context }: Route.LoaderArgs) {
 }
 
 export async function action({ request, context, params }: Route.ActionArgs) {
-  const session = await requireAuth(request, context);
+  await requireAuth(request, context);
   const db = context.cloudflare.env.DB;
   const formData = await request.formData();
   const { name } = params;
@@ -40,7 +40,6 @@ export async function action({ request, context, params }: Route.ActionArgs) {
   }
 
   const data = submission.value;
-
 
   try {
     if (data.movements) {
@@ -128,7 +127,9 @@ export default function EditWorkoutPage() {
   const lastResult = useActionData<typeof action>();
 
   console.log({ workout });
-  const movementIds = movements.filter(movement => workout.movements.includes(movement.name)).map(movement => movement.id ?? '');
+  const movementIds = movements
+    .filter(movement => workout.movements.includes(movement.name))
+    .map(movement => movement.id ?? '');
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col py-12 sm:px-6 lg:px-8">
