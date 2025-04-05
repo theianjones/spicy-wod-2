@@ -1,4 +1,4 @@
-import { CalendarDays, Trophy, X } from 'lucide-react';
+import { CalendarDays, X } from 'lucide-react';
 import { Form, Link, Outlet, redirect, useLoaderData } from 'react-router';
 import { Button } from '~/components/ui/button';
 import { ScoreDisplay } from '~/components/workouts/score-display';
@@ -7,11 +7,10 @@ import { deleteWodResult, getResultsForWodbyUserId } from '~/lib/results';
 import { getWorkoutWithMovementsByIdOrName } from '~/lib/workouts';
 import { requireAuth } from '~/middleware/auth';
 import { AllWodResult, type Workout } from '~/schemas/models';
-import type { Route } from '../workouts/+types/[name]';
-
+import type { Route } from './+types/[name].index';
 
 export async function action({ request, context, params }: Route.ActionArgs) {
-  const session = await requireAuth(request, context);
+  await requireAuth(request, context);
   const formData = await request.formData();
   const resultId = formData.get('resultId') as string;
 
@@ -58,7 +57,13 @@ export default function WorkoutPage() {
               {workout.description}
             </p>
           </div>
-          <div className="flex flex-col gap-4 justify-between">
+          <div className="flex gap-4">
+            <Button
+              className="bg-white text-black hover:bg-white hover:text-black border-4 border-black text-xl px-8 py-6 font-mono"
+              asChild
+            >
+              <Link to="edit">EDIT</Link>
+            </Button>
             <Button
               className="bg-black text-white hover:bg-white hover:text-black border-4 border-black text-xl px-8 py-6 font-mono"
               asChild
